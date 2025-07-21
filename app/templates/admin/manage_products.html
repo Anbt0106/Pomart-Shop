@@ -1,0 +1,56 @@
+{% extends "layout_admin.html" %}
+
+{% block page_title %}Quản lý sản phẩm{% endblock %}
+
+{% block content %}
+<div class="admin-content">
+    <div class="admin-header">
+        <h1>Quản lý sản phẩm</h1>
+        <div class="admin-actions">
+            <a href="{{ url_for('admin.add_item') }}" class="btn btn-primary">
+                <i class="fa-solid fa-plus"></i> Thêm sản phẩm
+            </a>
+        </div>
+    </div>
+
+    <!-- Search and Filter -->
+    <div class="search-filter">
+        <input type="text" id="search" placeholder="Tìm kiếm sản phẩm..." class="form-control">
+
+    </div>
+
+    <!-- Product Table -->
+    <div class="product-table">
+        <table>
+            <thead>
+                <tr>
+                    <th><input type="checkbox" ></th>
+                    <th>Tên sản phẩm</th>
+                    <th>Giá</th>
+                    <th>Số lượng</th>
+                    <th>Trạng thái</th>
+                    <th>Hành động</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for product in products %}
+                <tr>
+                    <td><input type="checkbox" data-id="{{ product.id }}"></td>
+                    <td>{{ product.name }}</td>
+                    <td>{{ product.price }}</td>
+                    <td>{{ product.stock }}</td>
+                    <td>{{ 'Hoạt động' if product.is_active else 'Không hoạt động' }}</td>
+                    <td>
+                        <a href="{{ url_for('admin.edit_item', product_id=product.id) }}" class="btn btn-sm btn-warning">
+                            <i class="fa-solid fa-edit"></i> Sửa
+                        </a>
+
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+{% endblock %}

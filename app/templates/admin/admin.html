@@ -1,0 +1,108 @@
+{% extends "layout_admin.html" %}
+
+{% block page_title %}Dashboard{% endblock %}
+
+{% block content %}
+<div class="admin-content">
+    <div class="admin-header">
+        <h1>Admin Dashboard</h1>
+        <div class="admin-date">
+            <i class="fa-regular fa-calendar"></i>
+            <span id="current-date"></span>
+        </div>
+    </div>
+
+    <!-- Statistics Cards -->
+    <div class="stats-grid">
+        <div class="stat-card" >
+
+            <div class="stat-icon">
+                <i class="fa-solid fa-box"></i>
+            </div>
+            <div class="stat-info">
+                <h3>{{ total_products or 0 }}</h3>
+                <p>Tổng sản phẩm</p>
+            </div>
+        </div>
+
+        <div class="stat-card">
+            <div class="stat-icon">
+                <i class="fa-solid fa-users"></i>
+            </div>
+            <div class="stat-info">
+                <h3>{{ total_users or 0 }}</h3>
+                <p>Người dùng</p>
+            </div>
+        </div>
+
+        <div class="stat-card">
+            <div class="stat-icon">
+                <i class="fa-solid fa-shopping-cart"></i>
+            </div>
+            <div class="stat-info">
+                <h3>{{ total_orders or 0 }}</h3>
+                <p>Đơn hàng</p>
+            </div>
+        </div>
+
+        <div class="stat-card">
+            <div class="stat-icon">
+                <i class="fa-solid fa-dollar-sign"></i>
+            </div>
+            <div class="stat-info">
+                <h3>${{ total_revenue or 0 }}</h3>
+                <p>Doanh thu</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Quick Actions -->
+<!--    <div class="quick-actions">-->
+<!--        <h2>Thao tác nhanh</h2>-->
+<!--        <div class="action-grid">-->
+<!--            <a href="{{ url_for('admin.add_item') }}" class="action-card">-->
+<!--                <i class="fa-solid fa-plus"></i>-->
+<!--                <span>Thêm sản phẩm</span>-->
+<!--            </a>-->
+<!--            <a href="{{ url_for('admin.manage_products') }}" class="action-card">-->
+<!--                <i class="fa-solid fa-list"></i>-->
+<!--                <span>Quản lý sản phẩm</span>-->
+<!--            </a>-->
+<!--            <a href="#" class="action-card">-->
+<!--                <i class="fa-solid fa-users-gear"></i>-->
+<!--                <span>Quản lý người dùng</span>-->
+<!--            </a>-->
+<!--            <a href="#" class="action-card">-->
+<!--                <i class="fa-solid fa-chart-line"></i>-->
+<!--                <span>Báo cáo</span>-->
+<!--            </a>-->
+<!--        </div>-->
+<!--    </div>-->
+
+<!--    &lt;!&ndash; Recent Activities &ndash;&gt;-->
+<!--    <div class="recent-activities">-->
+<!--        <h2>Hoạt động gần đây</h2>-->
+<!--        <div class="activity-list">-->
+<!--            <div class="activity-item">-->
+<!--                <i class="fa-solid fa-plus-circle"></i>-->
+<!--                <span>Sản phẩm mới đã được thêm</span>-->
+<!--                <small>2 giờ trước</small>-->
+<!--            </div>-->
+<!--            <div class="activity-item">-->
+<!--                <i class="fa-solid fa-edit"></i>-->
+<!--                <span>Cập nhật thông tin sản phẩm</span>-->
+<!--                <small>5 giờ trước</small>-->
+<!--            </div>-->
+<!--            <div class="activity-item">-->
+<!--                <i class="fa-solid fa-shopping-cart"></i>-->
+<!--                <span>Đơn hàng mới #1234</span>-->
+<!--                <small>1 ngày trước</small>-->
+<!--            </div>-->
+<!--        </div>-->
+<!--    </div>-->
+</div>
+
+<script>
+document.getElementById('current-date').textContent = new Date().toLocaleDateString('vi-VN');
+</script>
+{% endblock %}

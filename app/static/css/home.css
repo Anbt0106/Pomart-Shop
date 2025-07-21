@@ -1,0 +1,156 @@
+.container {
+    margin-top: 120px;
+}
+.banner__container {
+    width: 100%;
+    height: auto;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+    color: #fff;
+    text-align: center;
+}
+
+.images__banner {
+    width: 100%;
+    height: auto;
+    position: relative;
+}
+
+.banner__container-image {
+    width: 100%;
+    height: auto;
+    background: #eee;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.10);
+    opacity: 0;
+    pointer-events: none;
+    position: absolute;
+    top: 0;
+    left: 0;
+    z-index: 0;
+    transition: opacity 0.6s cubic-bezier(.4, 0, .2, 1);
+}
+
+.banner__container-image.active {
+    opacity: 1;
+    pointer-events: auto;
+    z-index: 2;
+    position: relative;
+}
+
+.btn_sliders {
+    position: absolute;
+    bottom: 15px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 120px;
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    padding: 0 0;
+    z-index: 2;
+}
+
+.btn_sliders .slider-btn {
+    flex: unset;
+    width: 20px;
+    height: 2px;
+    background-color: #fff;
+    cursor: pointer;
+    min-width: 0;
+    opacity: 0.5;
+    border-radius: 2px;
+    border: none;
+    transition: opacity 0.2s, background 0.2s;
+}
+
+.btn_sliders .slider-btn.active {
+    opacity: 1;
+    background-color: #ffffff;
+    box-shadow: 0 0 6px #dbdbdb;
+}
+
+.slide {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 45px;
+    height: 45px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 2;
+    cursor: pointer;
+    user-select: none;
+}
+
+.slide.left {
+    left: 20px;
+}
+
+.slide.right {
+    right: 20px;
+}
+
+.slide span {
+    font-size: 24px;
+    color: #fff;
+    line-height: 40px;
+    pointer-events: none;
+}
+
+@media (max-width: 768px) {
+    .banner__container {
+        max-width: 100%;
+        min-height: 160px;
+        border-radius: 0;
+    }
+
+    .banner__container-image {
+        border-radius: 0;
+    }
+
+    .slide {
+        width: 32px;
+        height: 32px;
+    }
+}
+
+
+
+/* New Arrivals section */
+.New_Arrivals {
+    margin-top: 140px;
+    width: 100%;
+    display: flex;
+    justify-content: center;
+}
+
+.New_Arrivals_container {
+    width: 100%;
+    max-width: 1120px;
+    margin: 0 auto;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 16px;
+}
+
+.New_Arrivals_title {
+    color: #dd0707;
+    font-size: 2rem;
+    font-weight: bold;
+    margin: 0;
+    text-align: left;
+}
+
+.New_Arrivals_mores {
+    color: #000000;
+    font-size: 1.1rem;
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    height: 100%;
+}

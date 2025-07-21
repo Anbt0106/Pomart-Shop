@@ -1,0 +1,27 @@
+{% extends 'layout.html' %}
+
+{% block title %}Login{% endblock %}
+
+{% block content %}
+<form method="POST" class="signup-form">
+    <h3>Login</h3>
+
+    <div class="form-group">
+        <label for="email"></label>
+        <input type="email" class="form-control" id="email" name="email" placeholder="Email/Username" />
+    </div>
+
+    <div class="form-group">
+        <label for="password"></label>
+        <input type="password" class="form-control" id="password" name="password" placeholder="Password" />
+    </div>
+
+    <br />
+    <div class="buttons">
+        <button type="submit" class="btn btn-primary">Login</button>
+        <a href="/sign-up" class="btn btn-secondary" alt="Do you have an account?">Sign up</a>
+    </div>
+    <br />
+</form>
+
+{% endblock %}

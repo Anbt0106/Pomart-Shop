@@ -1,0 +1,129 @@
+body {
+    background: #f0f2f5;
+    font-family: Arial, sans-serif;
+}
+
+.signup-form {
+    width: 400px;
+    margin: 50px auto;
+    padding: 30px 40px;
+    background: #fff;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.signup-form h3 {
+    text-align: center;
+    margin-bottom: 20px;
+    color: #333;
+}
+
+.signup-form .form-group {
+    margin-bottom: 15px;
+}
+
+.signup-form .form-control {
+    width: 100%;
+    border-radius: 4px;
+    padding: 12px 16px;
+    border: 1px solid #ddd;
+}
+
+.signup-form .btn-primary {
+    background: #007bff;
+    border: none;
+}
+
+.signup-form .btn-primary:hover {
+    background: #0056b3;
+}
+
+.signup-form .btn-secondary {
+    background: #6c757d;
+    border: none;
+    text-decoration: none;
+}
+
+.signup-form .btn-secondary:hover {
+    background: #5a6268;
+}
+
+.signup-form .btn {
+    width: 40%;
+    height: 36px;
+    background-color: #3498db;
+    color: white;
+    border: none;
+    text-decoration: none;
+    display: inline-flex;
+    justify-content: center;
+    align-items: center;
+    border-radius: 4px;
+    font-size: 16px;
+}
+
+.signup-form .buttons {
+    display: flex;
+    justify-content: space-between;
+}
+
+
+
+
+/* Bảo vệ navbar khỏi bị ghi đè */
+.header__navbar,
+.header__navbar-list,
+.header__navbar-item,
+.header__search,
+.header__search-form,
+.header__search-input-group,
+.header__search-input,
+.header__search-button {
+    /* Đảm bảo các styles của navbar không bị ghi đè */
+    box-sizing: border-box;
+}
+
+/* Container cho flash messages */
+.flash-messages {
+    margin: 20px auto;
+    max-width: 400px;
+    text-align: center;
+}
+
+
+.alert {
+    padding: 12px 20px;
+    border-radius: 5px;
+    margin-bottom: 15px;
+    font-size: 16px;
+    font-weight: 500;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.07);
+    border: 1px solid transparent;
+    display: inline-block;
+    min-width: 200px;
+    transition: all 0.3s;
+    opacity: 1;
+    animation: fadeOut 3s ease 1 forwards;
+}
+
+@keyframes fadeOut {
+    from {
+        opacity: 1;
+    }
+    to {
+        opacity: 0;
+    }
+}
+
+.alert-success {
+    background-color: #e6ffed;
+    color: #207544;
+    border-color: #b7eb8f;
+}
+
+/* Lỗi */
+.alert-error {
+    background-color: #fff1f0;
+    color: #a8071a;
+    border-color: #ffa39e;
+}

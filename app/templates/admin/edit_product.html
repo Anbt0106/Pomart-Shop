@@ -1,0 +1,80 @@
+{% extends "layout_admin.html" %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="row">
+        <div class="col-md-8 offset-md-2">
+            <div class="card">
+                <div class="card-header">
+                    <h4><i class="fas fa-edit"></i> Sửa sản phẩm</h4>
+                </div>
+                <div class="card-body">
+                    <form method="POST" enctype="multipart/form-data">
+                        {{ form.hidden_tag() }}
+
+                        <div class="mb-3">
+                            {{ form.name.label(class="form-label") }}
+                            {{ form.name(class="form-control" + (" is-invalid" if form.name.errors else "")) }}
+                            {% for error in form.name.errors %}
+                                <div class="invalid-feedback">{{ error }}</div>
+                            {% endfor %}
+                        </div>
+                        <div class="mb-3">
+                            {{ form.description.label(class="form-label") }}
+                            {{ form.description(class="form-control" + (" is-invalid" if form.description.errors else ""), rows=4) }}
+                            {% for error in form.description.errors %}
+                                <div class="invalid-feedback">{{ error }}</div>
+                            {% endfor %}
+                        </div>
+                        <div class="mb-3">
+                            {{ form.price.label(class="form-label") }}
+                            {{ form.price(class="form-control" + (" is-invalid" if form.price.errors else "")) }}
+                            {% for error in form.price.errors %}
+                                <div class="invalid-feedback">{{ error }}</div>
+                            {% endfor %}
+                        </div>
+                        <div class="mb-3">
+                            {{ form.stock.label(class="form-label") }}
+                            {{ form.stock(class="form-control" + (" is-invalid" if form.stock.errors else "")) }}
+                            {% for error in form.stock.errors %}
+                                <div class="invalid-feedback">{{ error }}</div>
+                            {% endfor %}
+                        </div>
+                        <div class="mb-3">
+                            {{ form.is_active() }} {{ form.is_active.label }}
+                            {{ form.is_featured() }} {{ form.is_featured.label }}
+                        </div>
+                        <div class="mb-3">
+                            {{ form.date_released.label(class="form-label") }}
+                            {{ form.date_released(class="form-control" + (" is-invalid" if form.date_released.errors else "")) }}
+                            {% for error in form.date_released.errors %}
+                                <div class="invalid-feedback">{{ error }}</div>
+                            {% endfor %}
+                        </div>
+                        <div class="mb-3">
+                            {{ form.collection.label(class="form-label") }}
+                            {{ form.collection(class="form-control" + (" is-invalid" if form.collection.errors else "")) }}
+                            {% for error in form.collection.errors %}
+                                <div class="invalid-feedback">{{ error }}</div>
+                            {% endfor %}
+                        </div>
+                        <div class="mb-3">
+                            {{ form.image.label(class="form-label") }}
+                            {{ form.image(class="form-control" + (" is-invalid" if form.image.errors else "")) }}
+                            {% for error in form.image.errors %}
+                                <div class="invalid-feedback">{{ error }}</div>
+                            {% endfor %}
+                        </div>
+                        <div>
+                            <button type="submit" class="btn btn-primary">Cập nhật</button>
+                        </div>
+                    </form>
+                    <form method="POST" action="{{ url_for('admin.delete_item', product_id=item.id) }}" onsubmit="return confirm('Bạn có chắc chắn muốn xóa sản phẩm này?');" style="margin-top: 1rem;">
+                        <button type="submit" class="btn btn-danger">Xóa sản phẩm</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %} 

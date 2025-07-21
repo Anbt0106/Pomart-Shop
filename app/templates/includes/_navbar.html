@@ -1,0 +1,71 @@
+<nav class="header__navbar">
+    <div class="header__navbar-top">
+        <div class="header__navbar-section header__navbar-left">
+            <form action="/search" method="get" class="header__search-form">
+                <div class="header__search-input-group">
+                    <input type="text" class="header__search-input" autocomplete="off"
+                        name="q" placeholder="Dimoo">
+                    <button class="header__search-button" type="submit">
+                        <i class="fa-solid fa-magnifying-glass"></i>
+                    </button>
+                </div>
+            </form>
+        </div>
+
+        <div class="header__navbar-section header__navbar-center">
+            <a href="{{ url_for('views.home') }}" class="header__navbar-logo-link">
+                <img src="{{ url_for('static', filename='img/logo.png') }}" alt="Logo"
+                    class="header__navbar-logo-image">
+            </a>
+        </div>
+
+        <div class="header__navbar-section header__navbar-right">
+            <a href="/help" class="header__navbar-icon">
+                <i class="fa-solid fa-headphones-simple"></i>
+            </a>
+            {% if current_user.is_authenticated %}
+            <a href="{{ url_for('views.account') }}" class="header__navbar-icon">
+                <i class="fa-solid fa-user"></i>
+            </a>
+            {% else %}
+            <a href="{{ url_for('auth.login') }}" class="header__navbar-icon">
+                <i class="fa-solid fa-user"></i>
+            </a>
+            {% endif %}
+            <a href="/favorite" class="header__navbar-icon">
+                <i class="fa-regular fa-heart"></i>
+            </a>
+            <a href="/cart" class="header__navbar-icon">
+                <i class="fa-solid fa-bag-shopping"></i>
+            </a>
+        </div>
+    </div>
+
+    <div class='header__navbar-bottom'>
+        <ul class="header__navbar-bottom-item">
+            <li class="header__navbar-item">
+                <div class="header__navbar-item-name">New & Featured</div>
+            </li>
+            <li class="header__navbar-item">
+                <div class="header__navbar-item-name">Series</div>
+            </li>
+            <li class="header__navbar-item">
+                <div class="header__navbar-item-name">Mega</div>
+            </li>
+            <li class="header__navbar-item">
+                <div class="header__navbar-item-name">Types</div>
+            </li>
+            <li class="header__navbar-item">
+                <div class="header__navbar-item-name">Accessories</div>
+            </li>
+
+            <li class="header__navbar-item">
+                <div class="header__navbar-item-name">
+                    About Us
+                </div>
+            </li>
+        </ul>
+    </div>
+    
+
+</nav>

@@ -1,0 +1,233 @@
+.header {
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+    border-bottom: 1.5px solid rgba(0,0,0,0.1);
+    background: var(--white-color);
+    width: 100%;
+    min-width: 0;
+}
+
+.header__navbar-top {
+    height: 70px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: #ffffff;
+    padding: 0 32px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0);
+    width: 100%;
+    min-width: 0;
+}
+
+.header__navbar-list {
+    display: flex;
+    align-items: center;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+
+.header__navbar-logo {
+    display: flex;
+    align-items: center;
+}
+
+.header__navbar-logo-link {
+    display: flex;
+    align-items: center;
+    text-decoration: none;
+    padding-left: 8px;
+}
+
+.header__navbar-logo-image {
+    max-width: 90px;
+    width: 100%;
+    height: auto;
+    object-fit: contain;
+}
+
+.header__navbar-item {
+    margin: 0 20px;
+    position: relative;
+    display: flex;
+    align-items: center;
+    font-size: 1rem;
+    color: var(--text-color);
+    cursor: pointer;
+    transition: color 0.2s;
+    background: transparent;
+    border: none;
+}
+
+.header__navbar-item-right {
+    margin: 0 8px;
+}
+
+.header__navbar-item-name {
+    position: relative;
+    height: 14px;
+    font-weight: 500;
+    font-size: clamp(10px, 1.3vw, 13px);
+    color: var(--text-color);
+    transition: color 0.2s;
+}
+
+.header__navbar-item:hover .header__navbar-item-name {
+    color: #ff0000;
+}
+
+/* Search Form Styles - update for modern look */
+.header__search {
+    display: flex;
+    align-items: center;
+    margin: 0 20px;
+}
+
+.header__search-form {
+    display: flex;
+    align-items: center;
+}
+
+.header__search-input-group {
+    display: flex;
+    align-items: center;
+    background: #f5f5f5;
+    border-radius: 24px;
+    overflow: hidden;
+    border: none;
+    padding: 0 8px 0 16px;
+    min-width: 144px;
+    height: 32px;
+}
+
+.header__search-input {
+    border: none;
+    outline: none;
+    background: transparent;
+    font-size: 14px;
+    font-weight: 600;
+    color: #222;
+    padding: 0 8px 0 0;
+    flex: 1;
+}
+
+.header__search-input::placeholder {
+    color: #bbb;
+    font-weight: 500;
+    opacity: 1;
+}
+
+.header__search-button {
+    background: none;
+    border: none;
+    color: #222;
+    padding: 0 12px;
+    min-width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 22px;
+    cursor: pointer;
+    box-shadow: none;
+}
+
+.header__search-button i {
+    color: #222;
+    font-size: 22px;
+}
+
+.header__search-button:active,
+.header__search-button:focus {
+    background: none;
+    outline: none;
+    box-shadow: none;
+}
+
+.header__navbar-item a {
+    text-decoration: none;
+    color: inherit;
+}
+
+.header__navbar-item a:hover {
+    color: #ff0000;
+}
+
+.header__navbar-item-cart {
+    border: 1.5px solid #e0e0e0;
+    border-radius: 24px;
+    padding: 6px 24px;
+    display: flex;
+    align-items: center;
+    color: #bbb;
+    transition: border-color 0.2s, color 0.2s;
+}
+
+.header__navbar-item-cart:hover {
+    border-color: #000000eb;
+}
+
+.header__navbar-item-cart i {
+    color: #282828;
+    font-size: clamp(14px, 2vw, 18px);
+    font-weight: bold;
+    transition: none;
+}
+
+.header__navbar-list-left .header__navbar-item-name {
+    font-size: clamp(12px, 1.7vw, 16px);
+    font-weight: 800;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .header__navbar {
+        flex-direction: column;
+        height: auto;
+        padding: 0 8px;
+    }
+    
+    .header__navbar-list {
+        flex-direction: column;
+        width: 100%;
+    }
+    
+    .header__navbar-item {
+        margin: 8px 0;
+    }
+    
+    .header__navbar-logo {
+        margin: 8px 0;
+    }
+    
+    .header__search {
+        margin: 8px 0;
+        width: 100%;
+    }
+    
+    .header__search-form {
+        width: 100%;
+    }
+    
+    .header__search-input-group {
+        width: 100%;
+    }
+    
+    .header__search-input {
+        min-width: auto;
+        flex: 1;
+    }
+}
+
+.container {
+    margin-top: 28px;
+}
+
+@media (max-width: 768px) {
+    .container {
+        margin-top: 16px;
+    }
+}
+
+

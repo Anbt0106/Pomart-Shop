@@ -1,0 +1,136 @@
+.header__navbar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    z-index: 1000;
+    background: #fff;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.03);
+}
+
+.header__navbar-top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    height: 70px;
+    background: #fff;
+    padding: 0 40px;
+    border-bottom: 1px solid #e0e0e0;
+    position: relative;
+}
+
+.header__navbar-section {
+    display: flex;
+    align-items: center;
+}
+
+.header__navbar-left {
+    flex: 1;
+    justify-content: flex-start;
+}
+
+.header__navbar-center {
+    flex: 0 0 auto;
+    justify-content: center;
+}
+
+.header__navbar-right {
+    flex: 1;
+    justify-content: flex-end;
+    gap: 18px;
+}
+
+.header__navbar-logo-link {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.header__navbar-logo-image {
+    height: 36px;
+    width: auto;
+    object-fit: contain;
+    display: block;
+}
+
+.header__search-form {
+    display: flex;
+    align-items: center;
+}
+
+.header__search-input-group {
+    display: flex;
+    align-items: center;
+    border: 1.5px solid #222;
+    border-radius: 25px;
+    padding: 0 12px;
+    background: #fff;
+    height: 40px;
+}
+
+.header__search-input {
+    border: none;
+    outline: none;
+    background: transparent;
+    font-size: 1rem;
+    padding: 0 8px;
+    width: 120px;
+}
+
+.header__search-input::placeholder {
+    color: #888;
+    font-size: 1rem;
+}
+
+.header__search-button {
+    background: none;
+    border: none;
+    color: #222;
+    font-size: 1.2rem;
+    cursor: pointer;
+    padding: 0 4px;
+}
+
+.header__navbar-icon {
+    margin-left: 0px;
+    color: #222;
+    font-size: 1.2rem;
+    position: relative;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+}
+
+.header__navbar-icon:hover {
+    color: #e60023;
+}
+
+.header__navbar-bottom {
+    position: relative;
+    height: 50px;
+    width: 100%;
+    background: #fff;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border-bottom: 1px solid #eee;
+}
+
+.header__navbar-bottom-item {
+    list-style: none;
+    font-size: 1rem; 
+    color: #222;
+    cursor: pointer;
+    position: relative;
+    padding: 0 4px;
+    display: flex;
+    align-items: center;
+}
+
+.header__navbar-item-name{
+    margin: 0px 20px;
+}
+
+.header__navbar-item-name:hover {
+    color: #e60023;
+}

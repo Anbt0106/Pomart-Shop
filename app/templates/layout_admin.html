@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <title>{% block title %}Admin Dashboard{% endblock %}</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/admin.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/add_product.css') }}">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100..900;1,100..900&display=swap"
+          rel="stylesheet">
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='fonts/fontawesome-free-6.7.2-web/fontawesome-free-6.7.2-web/css/all.min.css') }}">
+</head>
+<body>
+<!-- Sidebar -->
+<div class="admin-sidebar">
+
+    <div class="sidebar-header">
+        <a href="{{ url_for('views.home') }}" class="sidebar-logo-link">
+            <img src="{{ url_for('static', filename='img/logo.png') }}" alt="Logo" class="sidebar-logo">
+        </a>
+    </div>
+
+    <nav class="sidebar-nav">
+        <a href="{{ url_for('admin.dashboard') }}" class="nav-item">
+            <i class="fa-solid fa-home"></i>
+            <span>Dashboard</span>
+        </a>
+
+        <a href="{{ url_for('admin.manage_products') }}" class="nav-item">
+            <i class="fa-solid fa-box"></i>
+            <span>Quản lý sản phẩm</span>
+        </a>
+
+        <a href="#" class="nav-item">
+            <i class="fa-solid fa-users"></i>
+            <span>Quản lý người dùng</span>
+        </a>
+
+        <a href="#" class="nav-item">
+            <i class="fa-solid fa-shopping-cart"></i>
+            <span>Quản lý đơn hàng</span>
+        </a>
+
+        <a href="#" class="nav-item">
+            <i class="fa-solid fa-chart-line"></i>
+            <span>Báo cáo & thống kê</span>
+        </a>
+
+        <a href="#" class="nav-item">
+            <i class="fa-solid fa-cog"></i>
+            <span>Cài đặt</span>
+        </a>
+    </nav>
+
+    <div class="sidebar-footer">
+        <a href="{{ url_for('views.account') }}" class="user-profile">
+            <i class="fa-solid fa-user"></i>
+            <span>Admin</span>
+        </a>
+    </div>
+</div>
+
+<div class="admin-main">
+
+
+    <!-- Content Area -->
+    <div class="admin-content-wrapper">
+        {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+        <div class="flash-messages">
+            {% for category, message in messages %}
+            <div class="alert alert-{{ category }}">
+                <i class="fa-solid fa-{{ 'check-circle' if category == 'success' else 'exclamation-triangle' }}"></i>
+                {{ message }}
+                <button class="alert-close">&times;</button>
+            </div>
+            {% endfor %}
+        </div>
+        {% endif %}
+        {% endwith %}
+
+        {% block content %}{% endblock %}
+    </div>
+</div>
+
+</body>
+</html>

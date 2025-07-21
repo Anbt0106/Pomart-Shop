@@ -1,0 +1,144 @@
+{% extends "layout.html" %}
+
+{% block content %}
+    <div class="banner__container">
+        <div class="images__banner">
+
+                       
+                <a href="" class="banner__container-link">
+                    <video 
+                        id="myVideo"
+                        src="{{ url_for('static', filename='video/banner.mp4') }}" 
+                        muted
+                        class="banner__container-image"
+                        autoplay
+                    ></video>
+                </a>
+
+
+
+            <a href="" class="banner__container-link">
+                <img src="{{ url_for('static', filename='img/pucky_01.png') }}" alt="Banner 2"
+                    class="banner__container-image">
+                
+            </a>
+            <a href="" class="banner__container-link">
+                <img src="{{ url_for('static', filename='img/pucky_02.png') }}" alt="Banner 3"
+                    class="banner__container-image">
+            </a>
+            <a href="" class="banner__container-link">
+                <img src="{{ url_for('static', filename='img/twinkle_02.png') }}" alt="Banner 4"
+                    class="banner__container-image">
+            </a>
+            <a href="" class="banner__container-link">
+                <img src="{{ url_for('static', filename='img/skullpanda_01.png') }}" alt="Banner 5"
+                    class="banner__container-image">
+            </a>
+            <a href="" class="banner__container-link">
+                <img src="{{ url_for('static', filename='img/mega_molly.png') }}" alt="Banner 6"
+                    class="banner__container-image">
+            </a>
+
+        </div>
+    
+        <div class="slide left" onclick="side_slide(-1)">
+            <span class="fas fa-chevron-left"></span>
+        </div>
+        <div class="slide right" onclick="side_slide(1)">
+            <span class="fas fa-chevron-right"></span>
+        </div>
+    
+        <div class="btn_sliders">
+            <span class="slider-btn" onclick="btm_slide(1)"></span>
+            <span class="slider-btn" onclick="btm_slide(2)"></span>
+            <span class="slider-btn" onclick="btm_slide(3)"></span>
+            <span class="slider-btn" onclick="btm_slide(4)"></span>
+            <span class="slider-btn" onclick="btm_slide(5)"></span>
+            <span class="slider-btn" onclick="btm_slide(6)"></span>
+        </div>
+    
+        <script>
+            let indexValue = 1;
+            const images = document.getElementsByClassName("banner__container-image");
+            const btns = document.getElementsByClassName("slider-btn");
+            let autoSlideInterval = null;
+            const delay = 5000; 
+    
+            function showImg(n) {
+                if (n > images.length) n = 1;
+                if (n < 1) n = images.length;
+    
+                for (let i = 0; i < images.length; i++) {
+                    images[i].classList.remove("active");
+                }
+                images[n - 1].classList.add("active");
+    
+                for (let i = 0; i < btns.length; i++) {
+                    btns[i].classList.remove("active");
+                }
+                btns[n - 1].classList.add("active");
+    
+                indexValue = n;
+            }
+    
+            function btm_slide(n) {
+                showImg(n);
+            }
+    
+            function side_slide(n) {
+                showImg(indexValue + n);
+                resetAutoSlide();
+            }
+    
+            function autoSlide() {
+                showImg(indexValue + 1);
+            }
+    
+            function resetAutoSlide() {
+                if (autoSlideInterval) clearInterval(autoSlideInterval);
+                autoSlideInterval = setInterval(autoSlide, delay);
+            }
+    
+            showImg(indexValue);
+        </script>
+    </div>
+
+
+
+    <div class="New_Arrivals">
+        <div class="New_Arrivals_container">
+            <p class="New_Arrivals_title">New Arrivals</p>
+            <a href="{{ url_for('views.new_arrivals') }}" class="New_Arrivals_mores">Release Calendar &gt;</a>
+        </div>
+    </div>
+
+
+
+    
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+{% endblock %}
