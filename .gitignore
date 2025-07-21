@@ -53,12 +53,7 @@ instance/
 *.db
 *.sqlite3
 
-# Images, videos, and other media generated at runtime
-*.png
-*.jpg
-*.jpeg
-*.gif
-*.mp4
+
 
 # System files
 .DS_Store
