@@ -1,19 +1,28 @@
 from flask import Flask, render_template
 from flask_sqlalchemy import SQLAlchemy
 from flask_login import LoginManager
+from flask_migrate import Migrate
 
 db = SQLAlchemy()
 login_manager = LoginManager()
+migrate = Migrate()
 
 def create_app():
     app = Flask(__name__, template_folder='templates', static_folder='static')
 
-    app.config['SECRET_KEY'] = 'DontTellAnyone'
+    # Basic configurations
+    app.config['SECRET_KEY'] = 'your-secret-key-here'  # Thêm dòng này
+    app.config['WTF_CSRF_SECRET_KEY'] = 'csrf-key-here'  # Thêm dòng này
     app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://postgres:01062004@localhost:5432/popmart_demo'
+    app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+
+    # Initialize extensions
     db.init_app(app)
     login_manager.init_app(app)
     login_manager.login_view = 'auth.login'
+    migrate.init_app(app, db)
 
+    # Register blueprints
     from .routes.views import views
     from .routes.auth import auth
     from .routes.admin import admin_bp

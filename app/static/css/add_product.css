@@ -1,0 +1,172 @@
+.admin-add_product {
+    background-color: #f9f9f9;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.admin-add_product .form-control {
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    font-size: 1rem;
+    width: 100%;
+}
+
+.form-group {
+    margin-bottom: 20px;
+}
+
+.box-form-group {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 15px;
+}
+
+
+.btn-box {
+    display: flex;
+    justify-content: flex-end;
+    gap: 15px; /* Thêm khoảng cách giữa hai nút */
+    margin-top: 20px;
+}
+
+/* --- Kiểu dáng chung cho các nút --- */
+.btn-box .btn {
+    width: 108px;
+
+    text-decoration: none;
+    padding: 12px 28px;
+    font-size: 1rem;
+    font-weight: 500;
+    cursor: pointer;
+    border: none;
+    border-radius: 8px; /* Bo góc mềm mại */
+    transition: all 0.2s ease-in-out;
+    text-align: center;
+    display: inline-block;
+    color: white; /* Chữ màu trắng cho cả hai nút */
+}
+
+.btn-box .btn:hover {
+    transform: translateY(-2px); /* Hiệu ứng nhấc lên khi di chuột */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+}
+
+/* --- Màu sắc riêng cho từng nút --- */
+
+/* Nút Lưu (Primary) - Màu xanh */
+.btn-box .btn-primary {
+    background-color: #0d6efd;
+}
+
+.btn-box .btn-primary:hover {
+    background-color: #0b5ed7;
+}
+
+/* Nút Hủy (Secondary) - Màu xám */
+.btn-box .btn-secondary {
+    background-color: #6c757d;
+}
+
+.btn-box .btn-secondary:hover {
+    background-color: #5a6268;
+}
+
+/* --- Image Upload Section --- */
+.image-upload-wrapper {
+    margin-top: 10px;
+}
+
+.image-upload-box {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    border: 2px dashed #007bff;
+    border-radius: 10px;
+    padding: 40px 20px;
+    text-align: center;
+    color: #007bff;
+    background-color: #f0f8ff;
+    cursor: pointer;
+    transition: background-color 0.3s, border-color 0.3s, transform 0.2s;
+}
+
+.image-upload-box:hover, .image-upload-box.dragover {
+    background-color: #e6f2ff;
+    border-color: #0056b3;
+}
+
+.image-upload-box.dragover {
+    transform: scale(1.02);
+}
+
+.image-upload-box i {
+    font-size: 48px;
+    margin-bottom: 15px;
+}
+
+.image-upload-box p {
+    margin: 0;
+    font-size: 1rem;
+    font-weight: 600;
+}
+
+.image-upload-box .form-control-file {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    opacity: 0;
+    cursor: pointer;
+}
+
+.image-previews-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 15px;
+    margin-top: 20px;
+}
+
+.preview-image-wrapper {
+    position: relative;
+    width: 150px;
+    height: 150px;
+}
+
+.preview-image-wrapper .img-thumbnail {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 8px;
+    border: 1px solid #ddd;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+}
+
+.preview-image-wrapper .remove-image-btn {
+    position: absolute;
+    top: -10px;
+    right: -10px;
+    width: 28px;
+    height: 28px;
+    background-color: #dc3545;
+    color: white;
+    border: none;
+    border-radius: 50%;
+    font-size: 16px;
+    font-weight: bold;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+    transition: background-color 0.2s, transform 0.2s;
+}
+
+.preview-image-wrapper .remove-image-btn:hover {
+    background-color: #c82333;
+    transform: scale(1.1);
+}

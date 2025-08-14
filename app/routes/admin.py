@@ -1,7 +1,7 @@
 # app/routes/admin.py
 import os
 
-from flask import Blueprint, render_template, request, flash, redirect, url_for
+from flask import Blueprint, render_template, request, flash, redirect, url_for, jsonify
 from flask_login import login_required
 from werkzeug.utils import secure_filename
 from datetime import datetime
@@ -42,22 +42,23 @@ def allowed_file(filename):
 @login_required
 def add_item():
     form = ShopItemForm()
+    # Get all collections for the datalist
+    collections = Collection.query.all()
+    collection_names = [c.name for c in collections]
+
+    if request.method == 'POST':
+
+        if not form.validate():
+            print("Form validation errors:", form.errors)  # Debug print
+            for field, errors in form.errors.items():
+                for error in errors:
+                    flash(f'Lỗi ở trường {field}: {error}', 'error')
+            return render_template('admin/add_product.html', form=form, collection_names=collection_names)
+
     if form.validate_on_submit():
         try:
-            img = None
-            if form.image.data:
-                file = form.image.data
-                if file and allowed_file(file.filename):
-                    filename = secure_filename(file.filename)
-                    timestamp = datetime.now().strftime('%Y%m%d%H%M%S')
-                    img = f"{timestamp}_{filename}"
-                    os.makedirs(UPLOAD_FOLDER, exist_ok=True)
-                    file.save(os.path.join(UPLOAD_FOLDER, img))
-                else:
-                    flash('Invalid file type. Allowed types are png, jpg, jpeg, gif.', category='error')
-                    return render_template('admin/add_product.html', form=form)
-
-            # Tạo sản phẩm mới (chỉ truyền các trường có trong model)
+            print("Form validated successfully")  # Debug print
+            # 1. Create Product instance
             new_item = Product(
                 name=form.name.data,
                 description=form.description.data,
@@ -68,36 +69,59 @@ def add_item():
                 date_released=form.date_released.data
             )
 
-            # Gán collection nếu có
+            # 2. Add product to session and flush to get ID
+            db.session.add(new_item)
+            db.session.flush()
+
+            # 3. Handle Collection
             collection_name = form.collection.data
             if collection_name:
-                collection_obj = Collection.query.filter_by(name=collection_name).first()
-                if collection_obj:
-                    new_item.collections.append(collection_obj)
-                else:
-                    flash('Collection not found.', category='error')
-                    return render_template('admin/add_product.html', form=form)
+                collection = Collection.query.filter_by(name=collection_name).first()
+                if not collection:
+                    # If collection doesn't exist, create a new one
+                    collection = Collection(name=collection_name)
+                    db.session.add(collection)
+                    db.session.flush()  # Get the collection ID
+                    flash(f'Đã tạo bộ sưu tập mới: "{collection_name}"', 'info')
+                new_item.collections.append(collection)
 
-            db.session.add(new_item)
+            # 4. Handle Image Uploads
+            if form.image.data:
+                files = request.files.getlist(form.image.name)
+                for file in files:
+                    if file and allowed_file(file.filename):
+                        filename = secure_filename(file.filename)
+                        timestamp = datetime.now().strftime('%Y%m%d%H%M%S%f')
+                        unique_filename = f"{timestamp}_{filename}"
+
+                        # Ensure upload folder exists
+                        os.makedirs(UPLOAD_FOLDER, exist_ok=True)
+                        file_path = os.path.join(UPLOAD_FOLDER, unique_filename)
+                        file.save(file_path)
+
+                        # Create and add image record
+                        product_image = ProductImage(
+                            product_id=new_item.id,
+                            image_url=unique_filename
+                        )
+                        db.session.add(product_image)
+
+            # 5. Commit all changes
             db.session.commit()
-
-            # Thêm ảnh nếu có
-            if img:
-                product_image = ProductImage(
-                    product_id=new_item.id,
-                    image_url=img
-                )
-                db.session.add(product_image)
-                db.session.commit()
-
-            flash('Item added successfully!', category='success')
-            return redirect(url_for('admin.dashboard'))
+            flash('Thêm sản phẩm thành công!', 'success')
+            return redirect(url_for('admin.manage_products'))
 
         except Exception as e:
             db.session.rollback()
-            flash(f'Error adding item: {str(e)}', category='error')
+            print(f"Detailed error: {str(e)}")  # Debug print
+            import traceback
+            print("Traceback:", traceback.format_exc())  # Print full traceback
+            flash(f'Đã xảy ra lỗi khi thêm sản phẩm: {str(e)}', 'error')
 
-    return render_template('admin/add_product.html', form=form)
+    return render_template('admin/add_product.html',
+                         form=form,
+                         title="Thêm sản phẩm mới",
+                         collection_names=collection_names)
 
 
 @admin_bp.route('/admin/products/edit/<int:product_id>', methods=['GET', 'POST'])
@@ -106,9 +130,16 @@ def edit_item(product_id):
     item = Product.query.get_or_404(product_id)
     form = ShopItemForm(obj=item)
 
+    # Get existing images
+    existing_images = ProductImage.query.filter_by(product_id=item.id).all()
+
+    # Get all collections for the datalist
+    collections = Collection.query.all()
+    collection_names = [c.name for c in collections]
+
     if form.validate_on_submit():
         try:
-            # Cập nhật các trường cơ bản
+            # Update basic fields
             item.name = form.name.data
             item.description = form.description.data
             item.price = form.price.data
@@ -117,52 +148,54 @@ def edit_item(product_id):
             item.is_featured = form.is_featured.data
             item.date_released = form.date_released.data
 
-            # Cập nhật collection
+            # Handle collection
             collection_name = form.collection.data
             if collection_name:
-                collection_obj = Collection.query.filter_by(name=collection_name).first()
-                if collection_obj:
-                    item.collections = [collection_obj]
-                else:
-                    item.collections = []
-            else:
-                item.collections = []
+                collection = Collection.query.filter_by(name=collection_name).first()
+                if not collection:
+                    collection = Collection(name=collection_name)
+                    db.session.add(collection)
+                    db.session.flush()
+                    flash(f'Đã tạo bộ sưu tập mới: "{collection_name}"', 'info')
+                item.collections = [collection]
 
-            # Cập nhật ảnh sản phẩm
-            if form.image.data:
-                file = form.image.data
-                if file and allowed_file(file.filename):
-                    filename = secure_filename(file.filename)
-                    timestamp = datetime.now().strftime('%Y%m%d%H%M%S')
-                    img = f"{timestamp}_{filename}"
-                    os.makedirs(UPLOAD_FOLDER, exist_ok=True)
-                    file.save(os.path.join(UPLOAD_FOLDER, img))
+            # Handle new image uploads
+            if form.image.data and any(file.filename for file in form.image.data):
+                files = request.files.getlist(form.image.name)
+                for file in files:
+                    if file and allowed_file(file.filename):
+                        filename = secure_filename(file.filename)
+                        timestamp = datetime.now().strftime('%Y%m%d%H%M%S%f')
+                        unique_filename = f"{timestamp}_{filename}"
 
-                    # Xóa ảnh cũ
-                    from app.models import ProductImage
-                    old_images = ProductImage.query.filter_by(product_id=item.id).all()
-                    for old_img in old_images:
-                        old_path = os.path.join(UPLOAD_FOLDER, old_img.image_url)
-                        if os.path.exists(old_path):
-                            os.remove(old_path)
-                        db.session.delete(old_img)
+                        file_path = os.path.join(UPLOAD_FOLDER, unique_filename)
+                        os.makedirs(os.path.dirname(file_path), exist_ok=True)
+                        file.save(file_path)
 
-                    # Thêm ảnh mới
-                    product_image = ProductImage(
-                        product_id=item.id,
-                        image_url=img
-                    )
-                    db.session.add(product_image)
+                        product_image = ProductImage(
+                            product_id=item.id,
+                            image_url=unique_filename
+                        )
+                        db.session.add(product_image)
 
             db.session.commit()
-            flash('Item edited successfully!', category='success')
+            flash('Cập nhật sản phẩm thành công!', 'success')
             return redirect(url_for('admin.manage_products'))
 
         except Exception as e:
             db.session.rollback()
-            flash(f'Error editing item: {str(e)}', category='error')
+            flash(f'Lỗi khi cập nhật sản phẩm: {str(e)}', 'error')
+            print(f"Error details: {str(e)}")
 
-    return render_template('admin/edit_product.html', form=form, item=item)
+    # For GET requests, pre-fill collection if exists
+    if item.collections:
+        form.collection.data = item.collections[0].name
+
+    return render_template('admin/edit_product.html',
+                         form=form,
+                         item=item,
+                         existing_images=existing_images,
+                         collection_names=collection_names)
 
 
 @admin_bp.route('/admin/products/delete/<int:product_id>', methods=['POST'])
@@ -209,3 +242,23 @@ def manage_products():
     products = query.all()
 
     return render_template('admin/manage_products.html', products=products)
+
+@admin_bp.route('/products/delete-image/<int:image_id>', methods=['POST'])
+@login_required
+def delete_product_image(image_id):
+    try:
+        image = ProductImage.query.get_or_404(image_id)
+
+        # Delete the physical file
+        file_path = os.path.join(UPLOAD_FOLDER, image.image_url)
+        if os.path.exists(file_path):
+            os.remove(file_path)
+
+        # Delete the database record
+        db.session.delete(image)
+        db.session.commit()
+
+        return jsonify({'success': True})
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({'success': False, 'error': str(e)}), 500
