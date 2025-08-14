@@ -37,9 +37,9 @@
 
 .social-list {
     display: flex;
-    gap: 20px;
+    align-items: center;
     list-style: none;
-    padding: 0;
+    padding: 16px;
     margin: 0;
 }
 
@@ -54,7 +54,6 @@
     text-decoration: none;
     transition: all 0.3s ease;
     border-radius: 50%;
-    background: rgba(0, 0, 0, 0.1);
 }
 
 .social-list a:hover {
@@ -93,6 +92,13 @@
     height: 35px;
     width: auto;
 }
+
+
+
+
+
+
+
 /* Main Content Section - Black Background */
 .footer-main-section {
     background-color: #000000;
@@ -114,17 +120,17 @@
 }
 
 .section-title {
-    font-size: 18px;
+    font-size: 16px;
     font-weight: 700;
     color: #ffffff;
-    margin: 0 0 20px 0;
+    margin: 0;
     text-transform: uppercase;
     letter-spacing: 1px;
 }
 
 .section-description {
     color: #cccccc;
-    font-size: 14px;
+    font-size: 12px;
     line-height: 1.6;
     margin: 0 0 25px 0;
 }
@@ -295,7 +301,7 @@
 .footer-columns {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
-    gap: 60px;
+    gap: 12px;
 }
 
 .footer-column {
@@ -325,7 +331,7 @@
 .column-links li a {
     color: #cccccc;
     text-decoration: none;
-    font-size: 14px;
+    font-size: 12px;
     transition: color 0.3s ease;
     line-height: 1.4;
 }
