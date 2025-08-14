@@ -1,5 +1,6 @@
 .container {
     margin-top: 120px;
+    min-height: 600px;
 }
 .banner__container {
     width: 100%;
@@ -136,6 +137,7 @@
     justify-content: center;
     align-items: center;
     gap: 16px;
+    flex-direction: column;
 }
 
 .New_Arrivals_title {
