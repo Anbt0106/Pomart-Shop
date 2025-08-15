@@ -121,38 +121,300 @@
 
 
 
-/* New Arrivals section */
-.New_Arrivals {
-    margin-top: 140px;
-    width: 100%;
-    display: flex;
-    justify-content: center;
+
+/* Products Section Styles */
+.Products {
+    padding: 80px 0;
+    background: #E9ECEFFF;
+    margin-top: 60px;
 }
 
-.New_Arrivals_container {
-    width: 100%;
-    max-width: 1120px;
+.Products_container {
+    max-width: 1200px;
     margin: 0 auto;
+    padding: 0 20px;
     display: flex;
-    justify-content: center;
+    justify-content: space-between;
     align-items: center;
-    gap: 16px;
-    flex-direction: column;
+    margin-bottom: 50px;
 }
 
-.New_Arrivals_title {
-    color: #dd0707;
-    font-size: 2rem;
-    font-weight: bold;
+.Products_title {
+    font-size: 36px;
+    font-weight: 700;
+    color: #2c3e50;
     margin: 0;
-    text-align: left;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    position: relative;
 }
 
-.New_Arrivals_mores {
-    color: #000000;
-    font-size: 1.1rem;
-    font-weight: 500;
-    display: flex;
-    align-items: center;
+.Products_title::after {
+    content: '';
+    position: absolute;
+    bottom: -10px;
+    left: 0;
+    width: 60px;
+    height: 4px;
+    background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+    border-radius: 2px;
+}
+
+.Products_mores {
+    text-decoration: none;
+    color: #667eea;
+    font-size: 16px;
+    font-weight: 600;
+    padding: 12px 24px;
+    border: 2px solid #667eea;
+    border-radius: 25px;
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+}
+
+.Products_mores::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
     height: 100%;
+    background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+    transition: left 0.3s ease;
+    z-index: -1;
+}
+
+.Products_mores:hover {
+    color: #ffffff;
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(102, 126, 234, 0.3);
+}
+
+.Products_mores:hover::before {
+    left: 0;
+}
+
+/* Products Grid */
+.products-grid {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 20px;
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 30px;
+}
+
+/* Product Card */
+.product-card {
+    background: #ffffff;
+    border-radius: 20px;
+    overflow: hidden;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+    transition: all 0.4s ease;
+    position: relative;
+    cursor: pointer;
+}
+
+.product-card:hover {
+    transform: translateY(-10px);
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+}
+
+.product-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+    transform: scaleX(0);
+    transition: transform 0.3s ease;
+}
+
+.product-card:hover::before {
+    transform: scaleX(1);
+}
+
+/* Product Image */
+.product-image {
+    position: relative;
+    overflow: hidden;
+    height: 280px;
+    background: #f8f9fa;
+}
+
+.product-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.4s ease;
+}
+
+.product-card:hover .product-image img {
+    transform: scale(1.1);
+}
+
+/* Product Info */
+.product-info {
+    padding: 25px;
+    text-align: center;
+}
+
+.product-name {
+    font-size: 18px;
+    font-weight: 600;
+    color: #2c3e50;
+    margin: 0 0 15px 0;
+    line-height: 1.4;
+    min-height: 50px;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+
+.product-price {
+    font-size: 20px;
+    font-weight: 700;
+    color: #ff1900;
+    margin: 0;
+    text-shadow: 0 1px 2px rgba(231, 76, 60, 0.2);
+}
+
+/* Responsive Design */
+@media (max-width: 1024px) {
+    .Products {
+        padding: 60px 0;
+    }
+    
+    .products-grid {
+        grid-template-columns: repeat(3, 1fr);
+        gap: 25px;
+    }
+    
+    .product-image {
+        height: 250px;
+    }
+}
+
+@media (max-width: 768px) {
+    .Products {
+        padding: 50px 0;
+        margin-top: 40px;
+    }
+    
+    .Products_container {
+        flex-direction: column;
+        gap: 20px;
+        text-align: center;
+        margin-bottom: 40px;
+    }
+    
+    .Products_title {
+        font-size: 28px;
+    }
+    
+    .Products_title::after {
+        left: 50%;
+        transform: translateX(-50%);
+    }
+    
+    .products-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 20px;
+        padding: 0 15px;
+    }
+    
+    .product-image {
+        height: 220px;
+    }
+    
+    .product-info {
+        padding: 20px;
+    }
+    
+    .product-name {
+        font-size: 16px;
+        min-height: 45px;
+    }
+    
+    .product-price {
+        font-size: 18px;
+    }
+}
+
+@media (max-width: 480px) {
+    .Products {
+        padding: 40px 0;
+    }
+    
+    .Products_title {
+        font-size: 24px;
+    }
+    
+    .Products_mores {
+        font-size: 14px;
+        padding: 10px 20px;
+    }
+    
+    .products-grid {
+        grid-template-columns: 1fr;
+        gap: 20px;
+        padding: 0 15px;
+    }
+    
+    .product-image {
+        height: 250px;
+    }
+    
+    .product-info {
+        padding: 15px;
+    }
+    
+    .product-name {
+        font-size: 15px;
+        min-height: 40px;
+    }
+    
+    .product-price {
+        font-size: 16px;
+    }
+}
+
+/* Loading State */
+.products-grid.loading {
+    opacity: 0.6;
+    pointer-events: none;
+}
+
+/* Empty State */
+.products-grid:empty::after {
+    content: 'No products available';
+    display: block;
+    text-align: center;
+    padding: 60px 20px;
+    color: #6c757d;
+    font-size: 18px;
+    font-style: italic;
+}
+
+/* Animation for cards appearing */
+.product-card {
+    animation: fadeInUp 0.6s ease forwards;
+    opacity: 0;
+    transform: translateY(30px);
+}
+
+.product-card:nth-child(1) { animation-delay: 0.1s; }
+.product-card:nth-child(2) { animation-delay: 0.2s; }
+.product-card:nth-child(3) { animation-delay: 0.3s; }
+.product-card:nth-child(4) { animation-delay: 0.4s; }
+
+@keyframes fadeInUp {
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
 }

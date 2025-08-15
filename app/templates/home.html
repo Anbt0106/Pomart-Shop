@@ -105,40 +105,28 @@
 
 
 
-    <div class="New_Arrivals">
-        <div class="New_Arrivals_container">
-            <p class="New_Arrivals_title">New Arrivals</p>
-            <a href="{{ url_for('views.new_arrivals') }}" class="New_Arrivals_mores">Release Calendar &gt;</a>
+    <div class="Products">
+        <div class="Products_container">
+            <p class="Products_title">Products</p>
+            <a href="{{ url_for('views.products') }}" class="Products_mores">More &gt;</a>
+        </div>
+
+        <div class="products-grid">
+            {% for product in products %}
+            <div class="product-card">
+                <div class="product-image">
+                    {% if product.images %}
+                    <img src="{{ url_for('static', filename='img/products/' + product.images[0].image_url) }}" alt="{{ product.name }}">
+                    {% endif %}
+                </div>
+                <div class="product-info">
+                    <h3 class="product-name">{{ product.name }}</h3>
+                    <p class="product-price">{{ "{:,.0f}".format(product.price) }} VND</p>
+                </div>
+            </div>
+            {% endfor %}
         </div>
     </div>
 
-
-
     
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 {% endblock %}

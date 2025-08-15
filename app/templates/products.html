@@ -1,0 +1,105 @@
+{% extends "layout.html" %}
+
+{% block title %}All Products - POP MART{% endblock %}
+
+{% block content %}
+
+<!-- Products Grid -->
+<div class="products-section">
+    <div class="container">
+        <!-- Products Filter Bar -->
+        <div class="products-filter">
+            <div class="filter-right">
+                <select class="sort-select" id="sortSelect">
+                    <option value="stock-high">Stock: High to Low</option>
+                    <option value="stock-low">Stock: Low to High</option>
+                    <option value="price-low">Price: Low to High</option>
+                    <option value="price-high">Price: High to Low</option>
+                    <option value="date-released">Release Date: Newest First</option>
+                </select>
+            </div>
+        </div>
+
+        <!-- Products Grid -->
+        <div class="products-grid" id="productsGrid">
+            {% for product in products %}
+            <div class="product-card" data-stock="{{ product.stock }}" data-price="{{ product.price }}" data-date-released="{{ product.date_released.isoformat() if product.date_released else '' }}" data-created-at="{{ product.created_at.isoformat() }}">
+                <div class="product-image">
+                    {% if product.images %}
+                    <img src="{{ url_for('static', filename='img/products/' + product.images[0].image_url) }}" alt="{{ product.name }}">
+                    {% else %}
+                    <div class="no-image">
+                        <i class="fas fa-image"></i>
+                        <span>No Image</span>
+                    </div>
+                    {% endif %}
+                </div>
+                <div class="product-info">
+                    <h3 class="product-name">{{ product.name }}</h3>
+                    <p class="product-price">{{ "{:,.0f}".format(product.price) }} VND</p>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+
+        <!-- No Products Message -->
+        {% if not products %}
+        <div class="no-products">
+            <div class="no-products-icon">
+                <i class="fas fa-box-open"></i>
+            </div>
+            <h3>No Products Available</h3>
+            <p>We're currently updating our product catalog. Please check back soon!</p>
+        </div>
+        {% endif %}
+    </div>
+</div>
+
+<!-- JavaScript for Sorting -->
+<script>
+document.getElementById('sortSelect').addEventListener('change', function() {
+    const sortBy = this.value;
+    const productsGrid = document.getElementById('productsGrid');
+    const products = Array.from(productsGrid.children);
+    
+    products.sort((a, b) => {
+        switch(sortBy) {
+            case 'stock-high':
+                const stockHighA = parseInt(a.dataset.stock);
+                const stockHighB = parseInt(b.dataset.stock);
+                return stockHighB - stockHighA;
+            
+            case 'stock-low':
+                const stockLowA = parseInt(a.dataset.stock);
+                const stockLowB = parseInt(b.dataset.stock);
+                return stockLowA - stockLowB;
+            
+            case 'price-low':
+                const priceA = parseFloat(a.dataset.price);
+                const priceB = parseFloat(b.dataset.price);
+                return priceA - priceB;
+            
+            case 'price-high':
+                const priceHighA = parseFloat(a.dataset.price);
+                const priceHighB = parseFloat(b.dataset.price);
+                return priceHighB - priceHighA;
+            
+            case 'date-released':
+                const dateReleasedA = a.dataset.dateReleased || '';
+                const dateReleasedB = b.dataset.dateReleased || '';
+                if (!dateReleasedA && !dateReleasedB) return 0;
+                if (!dateReleasedA) return 1;
+                if (!dateReleasedB) return -1;
+                return new Date(dateReleasedB) - new Date(dateReleasedA);
+            
+            default:
+                return 0;
+        }
+    });
+    
+    // Clear and re-append sorted products
+    productsGrid.innerHTML = '';
+    products.forEach(product => productsGrid.appendChild(product));
+});
+</script>
+{% endblock %}
