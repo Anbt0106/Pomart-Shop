@@ -1,0 +1,159 @@
+{% extends "layout.html" %}
+
+{% block title %}Giỏ hàng - Popmart{% endblock %}
+
+{% block content %}
+<div class="cart-page">
+    <div class="grid">
+
+        {% if cart_items %}
+            <div class="row">
+                <div class="col-lg-8">
+                    <div class="cart-items-container">
+                        <h1>Sản phẩm trong giỏ hàng</h1>
+                        
+                        {% for item in cart_items %}
+                        <div class="cart-item">
+                            <div class="cart-item-image">
+                                {% if item.product.images %}
+                                    <img src="{{ url_for('static', filename='img/products/' + item.product.images[0].image_url) }}" 
+                                         alt="{{ item.product.name }}">
+                                {% else %}
+                                    <img src="{{ url_for('static', filename='img/404.gif') }}" 
+                                         alt="No image available">
+                                {% endif %}
+                            </div>
+                            
+                            <div class="cart-item-details">
+                                <div class="cart-item-name">{{ item.product.name }}</div>
+
+                                <div class="cart-item-quantity">
+                                    <form method="POST" action="{{ url_for('cart.update_cart', product_id=item.product.id) }}">
+                                        <div class="quantity-row">
+                                            <label for="quantity-{{ item.product.id }}">Số lượng:</label>
+                                            <div class="quantity-controls">
+                                                <button type="button" class="quantity-btn decrease-btn" data-product-id="{{ item.product.id }}">-</button>
+                                                <input type="number" name="quantity" id="quantity-{{ item.product.id }}" 
+                                                       value="{{ item.quantity }}" 
+                                                       min="1" max="{{ item.product.stock }}" 
+                                                       class="quantity-input">
+                                                <button type="button" class="quantity-btn increase-btn" data-product-id="{{ item.product.id }}">+</button>
+                                            </div>
+                                            <button type="submit" class="update-btn">Cập nhật</button>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                            
+                            <div class="cart-item-actions">
+                                <a href="{{ url_for('cart.remove_from_cart', product_id=item.product.id) }}" 
+                                   class="remove-btn"
+                                   onclick="return confirm('Bạn có chắc muốn xóa sản phẩm này?')">
+                                    <i class="fas fa-trash"></i>
+                                </a>
+                            </div>
+                        </div>
+                        {% endfor %}
+
+                        {% if total < 500000 %}
+                                <small> Mua thêm {{ "{:,.0f}".format(500000 - total) }} VND để được miễn phí vận chuyển!</small>
+
+                        {% endif %}
+                    </div>
+                </div>
+                
+                <div class="col-lg-4">
+                    <div class="cart-summary">
+                        <h3>Tổng đơn hàng</h3>
+                        
+                        <div class="summary-row">
+                            <span>Tạm tính:</span>
+                            <span>{{ "{:,.0f}".format(total) }} VND</span>
+                        </div>
+                        
+                        <div class="summary-row">
+                            <span>Phí vận chuyển:</span>
+                            {% if total < 500000 %}
+                                <span>30,000 VND</span>
+                            {% else %}
+                                <span>Miễn phí</span>
+                            {% endif %}
+                        </div>
+                        
+                        <div class="summary-row summary-total">
+                            <strong>Tổng cộng:</strong>
+                            <strong>{{ "{:,.0f}".format(total + (0 if total >= 500000 else 30000)) }} VND</strong>
+                        </div>
+                        
+                        <div class="payment-section">
+                            <div class="checkout-button-container">
+                                <a href="{{ url_for('cart.checkout') }}" class="checkout-btn">
+                                    <i class="fas fa-shopping-cart"></i> Thanh toán
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        {% else %}
+            <div class="empty-cart">
+                <i class="fas fa-shopping-cart"></i>
+                <h3>Giỏ hàng trống</h3>
+                <p>Bạn chưa có sản phẩm nào trong giỏ hàng.</p>
+            </div>
+        {% endif %}
+
+        <!-- Related Products Section -->
+        <div class="related-products">
+            <h2 class="related-products__title">You might also like</h2>
+            <div class="related-products__grid">
+                {% for related_product in related_products %}
+                <div class="related-product-card">
+                    <a href="{{ url_for('views.product_detail', product_id=related_product.id) }}" class="related-product-link">
+                        <div class="related-product-image">
+                            {% if related_product.images %}
+                            <img src="{{ url_for('static', filename='img/products/' + related_product.images[0].image_url) }}" 
+                                 alt="{{ related_product.name }}">
+                            {% endif %}
+                        </div>
+                        <div class="related-product-info">
+                            <h3 class="related-product-name">{{ related_product.name }}</h3>
+                            <p class="related-product-price">{{ "{:,.0f}".format(related_product.price) }} VND</p>
+                        </div>
+                    </a>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Handle decrease quantity buttons
+    document.querySelectorAll('.decrease-btn').forEach(function(btn) {
+        btn.addEventListener('click', function() {
+            const productId = this.getAttribute('data-product-id');
+            const input = document.getElementById('quantity-' + productId);
+            const min = parseInt(input.getAttribute('min')) || 1;
+            if (input.value > min) {
+                input.value = parseInt(input.value) - 1;
+            }
+        });
+    });
+
+    // Handle increase quantity buttons
+    document.querySelectorAll('.increase-btn').forEach(function(btn) {
+        btn.addEventListener('click', function() {
+            const productId = this.getAttribute('data-product-id');
+            const input = document.getElementById('quantity-' + productId);
+            const max = parseInt(input.getAttribute('max')) || 999;
+            if (input.value < max) {
+                input.value = parseInt(input.value) + 1;
+            }
+        });
+    });
+});
+</script>
+{% endblock %}

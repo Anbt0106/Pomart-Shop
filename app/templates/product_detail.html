@@ -1,0 +1,199 @@
+{% extends "layout.html" %}
+
+{% block title %}{{ product.name }} - Popmart Demo{% endblock %}
+
+{% block content %}
+<div class="product-detail">
+    <div class="product-detail__container">
+        <!-- Breadcrumb -->
+        <nav class="breadcrumb">
+            <a href="{{ url_for('views.home') }}" class="breadcrumb__link">Home</a>
+            <span class="breadcrumb__separator">/</span>
+            <a href="{{ url_for('views.products') }}" class="breadcrumb__link">Products</a>
+            <span class="breadcrumb__separator">/</span>
+            <span class="breadcrumb__current">{{ product.name }}</span>
+        </nav>
+
+        <div class="product-detail__main">
+            <!-- Product Images Section -->
+            <div class="product-images">
+                <div class="product-images__main">
+                    {% if product.images %}
+                        <img src="{{ url_for('static', filename='img/products/' + product.images[0].image_url) }}" 
+                             alt="{{ product.name }}" 
+                             id="main-image"
+                             class="product-images__main-img">
+                    {% else %}
+                        <img src="{{ url_for('static', filename='img/404.gif') }}" 
+                             alt="No image available" 
+                             class="product-images__main-img">
+                    {% endif %}
+                </div>
+                
+                {% if product.images and product.images|length > 1 %}
+                <div class="product-images__thumbnails">
+                    {% for image in product.images %}
+                    <div class="product-images__thumbnail" onclick="changeMainImage('{{ url_for('static', filename='img/products/' + image.image_url) }}')">
+                        <img src="{{ url_for('static', filename='img/products/' + image.image_url) }}" 
+                             alt="{{ product.name }}" 
+                             class="product-images__thumb-img">
+                    </div>
+                    {% endfor %}
+                </div>
+                {% endif %}
+            </div>
+
+            <!-- Product Info Section -->
+            <div class="product-info">
+                <div class="product-info__header">
+                    <h1 class="product-info__title">{{ product.name }}</h1>
+                    {% if product.is_featured %}
+                    <span class="product-info__badge">Featured</span>
+                    {% endif %}
+                </div>
+
+                {% if product.description %}
+                <div class="product-info__description">
+                    <h3>Description</h3>
+                    <p>{{ product.description }}</p>
+                </div>
+                {% endif %}
+
+                <!-- Collections -->
+                {% if product.collections %}
+                <div class="product-info__collections">
+                    <div class="collections-header">
+                        <h3>Collections:</h3>
+                        <div class="product-info__collections-tags">
+                            {% for collection in product.collections %}
+                            <a href="{{ url_for('views.collection', collection_id=collection.id) }}" 
+                               class="product-info__collection-tag">
+                                {{ collection.name }}
+                            </a>
+                            {% endfor %}
+                        </div>
+                    </div>
+                </div>
+                {% endif %}
+
+                <div class="product-info__price">
+                    <div class="price-header">
+                        <h3>Price:</h3>
+                        <span class="product-info__price-current">{{ "{:,.0f}".format(product.price) }} VND</span>
+                    </div>
+                </div>
+
+
+                <!-- Action Buttons -->
+                <div class="product-info__actions">
+                    {% if product.stock > 0 %}
+                    <form method="POST" action="{{ url_for('cart.add_to_cart', product_id=product.id) }}" class="product-info__form">
+                        {{ form.hidden_tag() }}
+                        <div class="product-info__quantity">
+                            <label for="quantity">Quantity:</label>
+                            <div class="product-info__quantity-controls">
+                                <button type="button" class="quantity-btn" onclick="decreaseQuantity()">-</button>
+                                {{ form.quantity(id="quantity", max=product.stock) }}
+                                <button type="button" class="quantity-btn" onclick="increaseQuantity()">+</button>
+                            </div>
+                        </div>
+                        <button type="submit" class="btn btn--primary btn--full">
+                            <i class="fas fa-shopping-cart"></i>
+                            Add to Cart
+                        </button>
+                    </form>
+                    {% endif %}
+
+                    <div class="product-info__secondary-actions">
+                        <button class="btn btn--secondary btn--full" onclick="addToWishlist({{ product.id }})">
+                            <i class="fas fa-heart"></i>
+                            Add to Wishlist
+                        </button>
+                        <button class="btn btn--outline btn--full" onclick="shareProduct()">
+                            <i class="fas fa-share-alt"></i>
+                            Share
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Related Products Section -->
+        <div class="related-products">
+            <h2 class="related-products__title">You might also like</h2>
+            <div class="related-products__grid">
+                {% for related_product in related_products %}
+                <div class="related-product-card">
+                    <a href="{{ url_for('views.product_detail', product_id=related_product.id) }}" class="related-product-link">
+                        <div class="related-product-image">
+                            {% if related_product.images %}
+                            <img src="{{ url_for('static', filename='img/products/' + related_product.images[0].image_url) }}" 
+                                 alt="{{ related_product.name }}">
+                            {% endif %}
+                        </div>
+                        <div class="related-product-info">
+                            <h3 class="related-product-name">{{ related_product.name }}</h3>
+                            <p class="related-product-price">{{ "{:,.0f}".format(related_product.price) }} VND</p>
+                        </div>
+                    </a>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+function changeMainImage(imageSrc) {
+    document.getElementById('main-image').src = imageSrc;
+    
+    // Update active thumbnail
+    const thumbnails = document.querySelectorAll('.product-images__thumbnail');
+    thumbnails.forEach(thumb => thumb.classList.remove('active'));
+    event.currentTarget.classList.add('active');
+}
+
+function decreaseQuantity() {
+    const input = document.getElementById('quantity');
+    const min = parseInt(input.getAttribute('min')) || 1;
+    if (input.value > min) {
+        input.value = parseInt(input.value) - 1;
+    }
+}
+
+function increaseQuantity() {
+    const input = document.getElementById('quantity');
+    const max = parseInt(input.getAttribute('max')) || 999;
+    if (input.value < max) {
+        input.value = parseInt(input.value) + 1;
+    }
+}
+
+function addToWishlist(productId) {
+    // TODO: Implement wishlist functionality
+    alert('Wishlist functionality coming soon!');
+}
+
+function shareProduct() {
+    if (navigator.share) {
+        navigator.share({
+            title: '{{ product.name }}',
+            text: 'Check out this amazing product from Popmart!',
+            url: window.location.href
+        });
+    } else {
+        // Fallback for browsers that don't support Web Share API
+        navigator.clipboard.writeText(window.location.href);
+        alert('Link copied to clipboard!');
+    }
+}
+
+// Initialize first thumbnail as active
+document.addEventListener('DOMContentLoaded', function() {
+    const firstThumbnail = document.querySelector('.product-images__thumbnail');
+    if (firstThumbnail) {
+        firstThumbnail.classList.add('active');
+    }
+});
+</script>
+{% endblock %}

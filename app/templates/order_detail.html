@@ -1,0 +1,262 @@
+{% extends "layout.html" %}
+
+{% block title %}Chi tiết đơn hàng #{{ order.id }} - Popmart{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="row">
+        <div class="col-lg-8">
+            <div class="card">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <h5 class="mb-0">Đơn hàng #{{ order.id }}</h5>
+                    <a href="{{ url_for('cart.my_orders') }}" class="btn btn-outline-secondary btn-sm">
+                        <i class="fas fa-arrow-left"></i> Quay lại
+                    </a>
+                </div>
+                <div class="card-body">
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <strong>Ngày đặt hàng:</strong><br>
+                            {{ order.placed_at.strftime('%d/%m/%Y %H:%M') }}
+                        </div>
+                        <div class="col-md-6">
+                            <strong>Trạng thái:</strong><br>
+                            <span class="badge bg-{{ 'success' if order.status == 'delivered' else 'warning' if order.status == 'pending' else 'info' if order.status == 'shipped' else 'danger' }} fs-6">
+                                {{ order.status_display }}
+                            </span>
+                        </div>
+                    </div>
+                    
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <strong>Phương thức thanh toán:</strong><br>
+                            {% if order.payment_transactions %}
+                                {% set payment = order.payment_transactions[0] %}
+                                {% if payment.payment_method == 'cod' %}
+                                    <i class="fas fa-money-bill-wave text-success"></i> Thanh toán khi nhận hàng (COD)
+                                {% elif payment.payment_method == 'bank' %}
+                                    <i class="fas fa-university text-primary"></i> Chuyển khoản ngân hàng
+                                {% elif payment.payment_method == 'momo' %}
+                                    <i class="fas fa-wallet text-danger"></i> Ví MoMo
+                                {% elif payment.payment_method == 'zalopay' %}
+                                    <i class="fas fa-wallet text-info"></i> ZaloPay
+                                {% else %}
+                                    {{ payment.payment_method }}
+                                {% endif %}
+                            {% endif %}
+                        </div>
+                        <div class="col-md-6">
+                            <strong>Trạng thái thanh toán:</strong><br>
+                            <span class="badge bg-{{ 'success' if order.payment_status == 'paid' else 'secondary' if order.payment_status == 'unpaid' else 'warning' }}">
+                                {{ order.payment_status_display }}
+                            </span>
+                        </div>
+                    </div>
+                    
+                    {% if order.discount %}
+                    <div class="alert alert-success">
+                        <i class="fas fa-tag"></i>
+                        <strong>Mã giảm giá:</strong> {{ order.discount.code }} 
+                        (Giảm {{ "{:,.0f}".format(order.discount.calculate_discount(order.total_amount)) }} VND)
+                    </div>
+                    {% endif %}
+                    
+                    <hr>
+                    
+                    <h6>Sản phẩm đã đặt:</h6>
+                    {% for item in order.items %}
+                    <div class="row mb-3 align-items-center border-bottom pb-3">
+                        <div class="col-md-2">
+                            {% if item.product.images %}
+                                <img src="{{ url_for('static', filename='img/products/' + item.product.images[0].image_url) }}" 
+                                     alt="{{ item.product.name }}" 
+                                     class="img-fluid rounded" 
+                                     style="max-width: 80px;">
+                            {% else %}
+                                <img src="{{ url_for('static', filename='img/404.gif') }}" 
+                                     alt="No image available" 
+                                     class="img-fluid rounded" 
+                                     style="max-width: 80px;">
+                            {% endif %}
+                        </div>
+                        <div class="col-md-4">
+                            <h6 class="mb-1">{{ item.product.name }}</h6>
+                                                            <small class="text-muted">
+                                    {% if item.product.collections %}
+                                        {{ item.product.collections[0].name }}
+                                    {% else %}
+                                        No collection
+                                    {% endif %}
+                                </small>
+                        </div>
+                        <div class="col-md-2 text-center">
+                            <span class="badge bg-secondary">{{ item.quantity }}</span>
+                        </div>
+                        <div class="col-md-2 text-center">
+                            <span class="text-primary">{{ "{:,.0f}".format(item.price) }} VND</span>
+                        </div>
+                        <div class="col-md-2 text-end">
+                            <strong>{{ "{:,.0f}".format(item.subtotal) }} VND</strong>
+                        </div>
+                    </div>
+                    {% endfor %}
+                    
+                    <hr>
+                    
+                    <div class="row">
+                        <div class="col-md-8 text-end">
+                            <strong>Tổng cộng:</strong>
+                        </div>
+                        <div class="col-md-4 text-end">
+                            <strong class="text-primary fs-4">{{ "{:,.0f}".format(order.total_amount) }} VND</strong>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Order Timeline -->
+            <div class="card mt-4">
+                <div class="card-header">
+                    <h6 class="mb-0">Tiến trình đơn hàng</h6>
+                </div>
+                <div class="card-body">
+                    <div class="timeline">
+                        <div class="timeline-item {{ 'active' if order.status in ['pending', 'shipped', 'delivered'] else '' }}">
+                            <div class="timeline-marker bg-success">
+                                <i class="fas fa-check"></i>
+                            </div>
+                            <div class="timeline-content">
+                                <h6>Đặt hàng thành công</h6>
+                                <p class="text-muted">{{ order.placed_at.strftime('%d/%m/%Y %H:%M') }}</p>
+                            </div>
+                        </div>
+                        
+                        <div class="timeline-item {{ 'active' if order.status in ['shipped', 'delivered'] else '' }}">
+                            <div class="timeline-marker {{ 'bg-success' if order.status in ['shipped', 'delivered'] else 'bg-secondary' }}">
+                                <i class="fas fa-box"></i>
+                            </div>
+                            <div class="timeline-content">
+                                <h6>Đang xử lý</h6>
+                                <p class="text-muted">Đơn hàng đang được chuẩn bị</p>
+                            </div>
+                        </div>
+                        
+                        <div class="timeline-item {{ 'active' if order.status == 'shipped' else '' }}">
+                            <div class="timeline-marker {{ 'bg-success' if order.status == 'shipped' else 'bg-secondary' }}">
+                                <i class="fas fa-truck"></i>
+                            </div>
+                            <div class="timeline-content">
+                                <h6>Đang giao hàng</h6>
+                                <p class="text-muted">Đơn hàng đang được vận chuyển</p>
+                            </div>
+                        </div>
+                        
+                        <div class="timeline-item {{ 'active' if order.status == 'delivered' else '' }}">
+                            <div class="timeline-marker {{ 'bg-success' if order.status == 'delivered' else 'bg-secondary' }}">
+                                <i class="fas fa-home"></i>
+                            </div>
+                            <div class="timeline-content">
+                                <h6>Đã giao hàng</h6>
+                                <p class="text-muted">Đơn hàng đã được giao thành công</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-lg-4">
+            <div class="card">
+                <div class="card-header">
+                    <h6 class="mb-0">Thông tin giao hàng</h6>
+                </div>
+                <div class="card-body">
+                    <div class="mb-3">
+                        <strong>Người nhận:</strong><br>
+                        {{ order.shipping_address.recipient_name }}
+                    </div>
+                    
+                    <div class="mb-3">
+                        <strong>Số điện thoại:</strong><br>
+                        <a href="tel:{{ order.shipping_address.phone_number }}" class="text-decoration-none">
+                            {{ order.shipping_address.phone_number }}
+                        </a>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <strong>Địa chỉ:</strong><br>
+                        {{ order.shipping_address.address }}<br>
+                        {{ order.shipping_address.city }}, {{ order.shipping_address.postal_code }}<br>
+                        {{ order.shipping_address.country }}
+                    </div>
+                </div>
+            </div>
+            
+            <div class="card mt-3">
+                <div class="card-header">
+                    <h6 class="mb-0">Hỗ trợ</h6>
+                </div>
+                <div class="card-body">
+                    <p class="small text-muted">Cần hỗ trợ về đơn hàng này?</p>
+                    <a href="#" class="btn btn-outline-primary btn-sm w-100 mb-2">
+                        <i class="fas fa-headset"></i> Liên hệ hỗ trợ
+                    </a>
+                    <a href="#" class="btn btn-outline-secondary btn-sm w-100">
+                        <i class="fas fa-question-circle"></i> FAQ
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+.timeline {
+    position: relative;
+    padding-left: 30px;
+}
+
+.timeline-item {
+    position: relative;
+    margin-bottom: 30px;
+}
+
+.timeline-marker {
+    position: absolute;
+    left: -35px;
+    top: 0;
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-size: 12px;
+}
+
+.timeline-item:not(:last-child)::after {
+    content: '';
+    position: absolute;
+    left: -20px;
+    top: 30px;
+    width: 2px;
+    height: 30px;
+    background-color: #dee2e6;
+}
+
+.timeline-item.active:not(:last-child)::after {
+    background-color: #28a745;
+}
+
+.timeline-content h6 {
+    margin-bottom: 5px;
+    font-weight: 600;
+}
+
+.timeline-content p {
+    margin-bottom: 0;
+    font-size: 14px;
+}
+</style>
+{% endblock %}

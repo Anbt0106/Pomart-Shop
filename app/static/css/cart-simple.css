@@ -1,0 +1,249 @@
+/* Simple Cart CSS - Clean and Easy to Customize */
+
+/* Main container */
+.cart-page {
+    background-color: #f5f5f5;
+    min-height: 100vh;
+    padding: 20px 0;
+}
+
+/* Cart items container */
+.cart-items-container {
+    background: white;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    padding: 20px;
+    margin-bottom: 20px;
+}
+
+/* Individual cart item */
+.cart-item {
+    display: flex;
+    align-items: center;
+    padding: 15px 0;
+    border-bottom: 1px solid #eee;
+}
+
+.cart-item:last-child {
+    border-bottom: none;
+}
+
+/* Product image */
+.cart-item img {
+    width: 80px;
+    height: 80px;
+    object-fit: cover;
+    border-radius: 6px;
+    margin-right: 15px;
+}
+
+/* Product details */
+.cart-item-details {
+    flex: 1;
+}
+
+.cart-item-name {
+    font-weight: 600;
+    color: #333;
+    margin-bottom: 5px;
+}
+
+/* Quantity controls */
+.quantity-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-wrap: nowrap;
+}
+
+.quantity-row label {
+    white-space: nowrap;
+    margin: 0;
+    font-weight: 500;
+    color: #333;
+}
+
+.quantity-controls {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
+.quantity-input {
+    width: 60px;
+    text-align: center;
+    padding: 5px;
+}
+
+.quantity-btn {
+    background: #f8f9fa;
+    color: #333;
+    width: 30px;
+    height: 30px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+}
+
+.quantity-btn:hover {
+    background: #e9ecef;
+}
+
+.update-btn {
+    background: #007bff;
+    color: white;
+    border: none;
+    padding: 6px 12px;
+    border-radius: 4px;
+    font-size: 0.9rem;
+    cursor: pointer;
+    white-space: nowrap;
+}
+
+.update-btn:hover {
+    background: #0056b3;
+}
+
+/* Remove button */
+.remove-btn {
+    background: #dc3545;
+    color: white;
+    border: none;
+    padding: 6px 12px;
+    border-radius: 4px;
+    font-size: 0.9rem;
+    cursor: pointer;
+}
+
+.remove-btn:hover {
+    background: #c82333;
+}
+
+/* Cart summary */
+.cart-summary {
+    background: white;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    padding: 20px;
+}
+
+.cart-summary h3 {
+    color: #333;
+    margin-bottom: 20px;
+    padding-bottom: 10px;
+    border-bottom: 2px solid #eee;
+}
+
+.summary-row {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 10px;
+    padding: 5px 0;
+}
+
+.summary-total {
+    font-size: 1.3rem;
+    font-weight: 700;
+    color: var(--price-color);
+    border-top: 2px solid #eee;
+    padding-top: 15px;
+    margin-top: 15px;
+    margin-bottom: 20px;
+}
+
+/* Payment section */
+.payment-section {
+    margin-top: 20px;
+}
+
+.checkout-button-container {
+    text-align: right;
+    margin-top: 15px;
+}
+
+/* Checkout button */
+.checkout-btn {
+    background: #28a745;
+    color: white;
+    border: none;
+    padding: 15px 30px;
+    border-radius: 6px;
+    font-size: 1.1rem;
+    font-weight: 600;
+    cursor: pointer;
+    display: inline-block;
+    text-decoration: none;
+}
+
+.checkout-btn:hover {
+    background: #218838;
+    color: white;
+}
+
+/* Empty cart */
+.empty-cart {
+    text-align: center;
+    padding: 60px 20px;
+}
+
+.empty-cart i {
+    font-size: 4rem;
+    color: #ccc;
+    margin-bottom: 20px;
+}
+
+.empty-cart h3 {
+    color: #666;
+    margin-bottom: 15px;
+}
+
+.empty-cart p {
+    color: #999;
+    margin-bottom: 30px;
+}
+
+/* Alert messages */
+.alert {
+    padding: 10px 15px;
+    border-radius: 4px;
+    margin-bottom: 15px;
+}
+
+.alert-info {
+    background: #d1ecf1;
+    color: #0c5460;
+    border: 1px solid #bee5eb;
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+    .cart-item {
+        flex-direction: column;
+        text-align: center;
+    }
+    
+    .cart-item img {
+        margin-right: 0;
+        margin-bottom: 15px;
+    }
+    
+    .quantity-row {
+        justify-content: center;
+        margin-top: 10px;
+    }
+    
+    .cart-summary {
+        margin-top: 20px;
+    }
+}
+
+/* Simple animations */
+.cart-item {
+    transition: background-color 0.2s ease;
+}
+
+.cart-item:hover {
+    background-color: #f8f9fa;
+}

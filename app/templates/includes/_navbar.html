@@ -35,8 +35,13 @@
             <a href="/favorite" class="header__navbar-icon">
                 <i class="fa-regular fa-heart"></i>
             </a>
-            <a href="/cart" class="header__navbar-icon">
+            <a href="{{ url_for('cart.view_cart') }}" class="header__navbar-icon position-relative">
                 <i class="fa-solid fa-bag-shopping"></i>
+                {% if session.cart %}
+                    <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger" style="font-size: 0.6em;">
+                        {{ session.cart|length }}
+                    </span>
+                {% endif %}
             </a>
         </div>
     </div>

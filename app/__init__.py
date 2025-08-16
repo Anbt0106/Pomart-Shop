@@ -1,20 +1,22 @@
+import os
 from flask import Flask, render_template
 from flask_sqlalchemy import SQLAlchemy
 from flask_login import LoginManager
 from flask_migrate import Migrate
+from config import config
 
 db = SQLAlchemy()
 login_manager = LoginManager()
 migrate = Migrate()
 
-def create_app():
+def create_app(config_name=None):
+    if config_name is None:
+        config_name = os.environ.get('FLASK_ENV', 'development')
+    
     app = Flask(__name__, template_folder='templates', static_folder='static')
-
-    # Basic configurations
-    app.config['SECRET_KEY'] = 'your-secret-key-here'  # Thêm dòng này
-    app.config['WTF_CSRF_SECRET_KEY'] = 'csrf-key-here'  # Thêm dòng này
-    app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://postgres:01062004@localhost:5432/popmart_demo'
-    app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+    
+    # Load configuration
+    app.config.from_object(config[config_name])
 
     # Initialize extensions
     db.init_app(app)
@@ -26,10 +28,12 @@ def create_app():
     from .routes.views import views
     from .routes.auth import auth
     from .routes.admin import admin_bp
+    from .routes.cart import cart
 
     app.register_blueprint(views, url_prefix='/')
     app.register_blueprint(auth, url_prefix='/')
     app.register_blueprint(admin_bp, url_prefix='/admin')
+    app.register_blueprint(cart, url_prefix='/cart')
 
     from .models.user import User, UserAddress
     from .models.product import Product, Collection, ProductCollection, ProductImage, InventoryLog, Wishlist

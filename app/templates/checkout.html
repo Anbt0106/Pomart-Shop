@@ -1,0 +1,297 @@
+{% extends "layout.html" %}
+
+{% block title %}Thanh toán - Popmart{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <h1 class="text-center mb-4">Thanh toán đơn hàng</h1>
+    
+    <div class="row">
+        <div class="col-lg-8">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0">Thông tin giao hàng</h5>
+                </div>
+                <div class="card-body">
+                    <form method="POST" id="checkout-form">
+                        {{ form.hidden_tag() }}
+                        
+                        <!-- Chọn địa chỉ -->
+                        <div class="mb-3">
+                            {{ form.address_choice.label(class="form-label") }}
+                            {{ form.address_choice(class="form-select", id="address-choice") }}
+                            {% if form.address_choice.errors %}
+                                <div class="text-danger small">
+                                    {% for error in form.address_choice.errors %}
+                                        {{ error }}
+                                    {% endfor %}
+                                </div>
+                            {% endif %}
+                        </div>
+                        
+                        <!-- Form địa chỉ mới (ẩn mặc định) -->
+                        <div id="new-address-form" style="display: none;">
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    {{ form.recipient_name.label(class="form-label") }}
+                                    {{ form.recipient_name(class="form-control", placeholder="Nhập tên người nhận") }}
+                                    {% if form.recipient_name.errors %}
+                                        <div class="text-danger small">
+                                            {% for error in form.recipient_name.errors %}
+                                                {{ error }}
+                                            {% endfor %}
+                                        </div>
+                                    {% endif %}
+                                </div>
+                                
+                                <div class="col-md-6 mb-3">
+                                    {{ form.phone_number.label(class="form-label") }}
+                                    {{ form.phone_number(class="form-control", placeholder="Nhập số điện thoại") }}
+                                    {% if form.phone_number.errors %}
+                                        <div class="text-danger small">
+                                            {% for error in form.phone_number.errors %}
+                                                {{ error }}
+                                            {% endfor %}
+                                        </div>
+                                    {% endif %}
+                                </div>
+                            </div>
+                            
+                            <div class="mb-3">
+                                {{ form.address.label(class="form-label") }}
+                                {{ form.address(class="form-control", rows="3", placeholder="Nhập địa chỉ chi tiết") }}
+                                {% if form.address.errors %}
+                                    <div class="text-danger small">
+                                        {% for error in form.address.errors %}
+                                            {{ error }}
+                                        {% endfor %}
+                                    </div>
+                                {% endif %}
+                            </div>
+                            
+                            <div class="row">
+                                <div class="col-md-4 mb-3">
+                                    {{ form.city.label(class="form-label") }}
+                                    {{ form.city(class="form-control", placeholder="Thành phố") }}
+                                    {% if form.city.errors %}
+                                        <div class="text-danger small">
+                                            {% for error in form.city.errors %}
+                                                {{ error }}
+                                            {% endfor %}
+                                        </div>
+                                    {% endif %}
+                                </div>
+                                
+                                <div class="col-md-4 mb-3">
+                                    {{ form.postal_code.label(class="form-label") }}
+                                    {{ form.postal_code(class="form-control", placeholder="Mã bưu điện") }}
+                                    {% if form.postal_code.errors %}
+                                        <div class="text-danger small">
+                                            {% for error in form.postal_code.errors %}
+                                                {{ error }}
+                                            {% endfor %}
+                                        </div>
+                                    {% endif %}
+                                </div>
+                                
+                                <div class="col-md-4 mb-3">
+                                    {{ form.country.label(class="form-label") }}
+                                    {{ form.country(class="form-control", placeholder="Quốc gia") }}
+                                    {% if form.country.errors %}
+                                        <div class="text-danger small">
+                                            {% for error in form.country.errors %}
+                                                {{ error }}
+                                            {% endfor %}
+                                        </div>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Hiển thị địa chỉ đã chọn -->
+                        <div id="selected-address-display" style="display: none;">
+                            <div class="alert alert-info">
+                                <h6>Địa chỉ giao hàng:</h6>
+                                <div id="selected-address-content"></div>
+                            </div>
+                        </div>
+                        
+                        <div class="mb-3">
+                            {{ form.payment_method.label(class="form-label") }}
+                            {{ form.payment_method(class="form-select") }}
+                            {% if form.payment_method.errors %}
+                                <div class="text-danger small">
+                                    {% for error in form.payment_method.errors %}
+                                        {{ error }}
+                                    {% endfor %}
+                                </div>
+                            {% endif %}
+                        </div>
+                        
+                        <div class="mb-3">
+                            {{ form.discount_code.label(class="form-label") }}
+                            <div class="input-group">
+                                {{ form.discount_code(class="form-control", placeholder="Nhập mã giảm giá (nếu có)") }}
+                                <button type="button" class="btn btn-outline-secondary" id="apply-discount">
+                                    Áp dụng
+                                </button>
+                            </div>
+                            <div id="discount-message" class="mt-2"></div>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <div class="form-check">
+                                {{ form.accept_terms(class="form-check-input") }}
+                                {{ form.accept_terms.label(class="form-check-label") }}
+                                {% if form.accept_terms.errors %}
+                                    <div class="text-danger small">
+                                        {% for error in form.accept_terms.errors %}
+                                            {{ error }}
+                                        {% endfor %}
+                                    </div>
+                                {% endif %}
+                            </div>
+                        </div>
+                        
+                        <div class="d-grid">
+                            {{ form.submit(class="btn btn-primary btn-lg") }}
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-lg-4">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0">Chi tiết đơn hàng</h5>
+                </div>
+                <div class="card-body">
+                    {% for item in cart_items %}
+                    <div class="d-flex justify-content-between mb-2">
+                        <div>
+                            <strong>{{ item.product.name }}</strong>
+                            <br>
+                            <small class="text-muted">{{ item.quantity }} x {{ "{:,.0f}".format(item.price) }} VND</small>
+                        </div>
+                        <span class="fw-bold">{{ "{:,.0f}".format(item.subtotal) }} VND</span>
+                    </div>
+                    {% endfor %}
+                    
+                    <hr>
+                    
+                    <div class="d-flex justify-content-between mb-2">
+                        <span>Tạm tính:</span>
+                        <span>{{ "{:,.0f}".format(subtotal) }} VND</span>
+                    </div>
+                    
+                    {% if discount_amount > 0 %}
+                    <div class="d-flex justify-content-between mb-2 text-success">
+                        <span>Giảm giá:</span>
+                        <span>-{{ "{:,.0f}".format(discount_amount) }} VND</span>
+                    </div>
+                    {% endif %}
+                    
+                    <div class="d-flex justify-content-between mb-2">
+                        <span>Phí vận chuyển:</span>
+                        <span>{{ "Miễn phí" if shipping_fee == 0 else "{:,.0f}".format(shipping_fee) + " VND" }}</span>
+                    </div>
+                    
+                    <hr>
+                    
+                    <div class="d-flex justify-content-between mb-3">
+                        <strong class="fs-5">Tổng cộng:</strong>
+                        <strong class="text-primary fs-5">{{ "{:,.0f}".format(final_total) }} VND</strong>
+                    </div>
+                    
+                    <div class="alert alert-info">
+                        <small>
+                            <i class="fas fa-info-circle"></i>
+                            Đơn hàng sẽ được xử lý trong vòng 24h và giao hàng trong 2-5 ngày làm việc.
+                        </small>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="card mt-3">
+                <div class="card-body">
+                    <h6>Thông tin thanh toán</h6>
+                    <ul class="list-unstyled small">
+                        <li><i class="fas fa-credit-card text-primary"></i> Thanh toán an toàn</li>
+                        <li><i class="fas fa-shield-alt text-success"></i> Bảo mật thông tin</li>
+                        <li><i class="fas fa-undo text-warning"></i> Hoàn tiền 100% nếu không hài lòng</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+// Xử lý chọn địa chỉ
+document.getElementById('address-choice').addEventListener('change', function() {
+    const selectedValue = this.value;
+    const newAddressForm = document.getElementById('new-address-form');
+    const selectedAddressDisplay = document.getElementById('selected-address-display');
+    const selectedAddressContent = document.getElementById('selected-address-content');
+    
+    if (selectedValue === 'new') {
+        // Hiển thị form tạo địa chỉ mới
+        newAddressForm.style.display = 'block';
+        selectedAddressDisplay.style.display = 'none';
+    } else {
+        // Ẩn form tạo địa chỉ mới và hiển thị địa chỉ đã chọn
+        newAddressForm.style.display = 'none';
+        
+        // Lấy thông tin địa chỉ từ danh sách
+        const addresses = {{ user_addresses|tojson }};
+        const selectedAddress = addresses.find(addr => addr.id == selectedValue);
+        
+        if (selectedAddress) {
+            selectedAddressContent.innerHTML = `
+                <strong>${selectedAddress.recipient_name}</strong><br>
+                <strong>SĐT:</strong> ${selectedAddress.phone_number}<br>
+                <strong>Địa chỉ:</strong> ${selectedAddress.address}<br>
+                <strong>Thành phố:</strong> ${selectedAddress.city}, ${selectedAddress.postal_code}<br>
+                <strong>Quốc gia:</strong> ${selectedAddress.country}
+            `;
+            selectedAddressDisplay.style.display = 'block';
+        }
+    }
+});
+
+// Xử lý mã giảm giá
+document.getElementById('apply-discount').addEventListener('click', function() {
+    const discountCode = document.getElementById('discount_code').value;
+    const messageDiv = document.getElementById('discount-message');
+    
+    if (!discountCode) {
+        messageDiv.innerHTML = '<div class="text-danger">Vui lòng nhập mã giảm giá</div>';
+        return;
+    }
+    
+    fetch('{{ url_for("cart.apply_discount") }}', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/x-www-form-urlencoded',
+        },
+        body: 'discount_code=' + encodeURIComponent(discountCode)
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            messageDiv.innerHTML = '<div class="text-success">' + data.message + '</div>';
+            // Reload page to update totals
+            setTimeout(() => location.reload(), 1500);
+        } else {
+            messageDiv.innerHTML = '<div class="text-danger">' + data.message + '</div>';
+        }
+    })
+    .catch(error => {
+        messageDiv.innerHTML = '<div class="text-danger">Có lỗi xảy ra, vui lòng thử lại</div>';
+    });
+});
+</script>
+
+
+{% endblock %}

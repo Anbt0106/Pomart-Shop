@@ -114,15 +114,17 @@
         <div class="products-grid">
             {% for product in products %}
             <div class="product-card">
-                <div class="product-image">
-                    {% if product.images %}
-                    <img src="{{ url_for('static', filename='img/products/' + product.images[0].image_url) }}" alt="{{ product.name }}">
-                    {% endif %}
-                </div>
-                <div class="product-info">
-                    <h3 class="product-name">{{ product.name }}</h3>
-                    <p class="product-price">{{ "{:,.0f}".format(product.price) }} VND</p>
-                </div>
+                <a href="{{ url_for('views.product_detail', product_id=product.id) }}" class="product-link">
+                    <div class="product-image">
+                        {% if product.images %}
+                        <img src="{{ url_for('static', filename='img/products/' + product.images[0].image_url) }}" alt="{{ product.name }}">
+                        {% endif %}
+                    </div>
+                    <div class="product-info">
+                        <h3 class="product-name">{{ product.name }}</h3>
+                        <p class="product-price">{{ "{:,.0f}".format(product.price) }} VND</p>
+                    </div>
+                </a>
             </div>
             {% endfor %}
         </div>

@@ -1,0 +1,61 @@
+{% extends "layout.html" %}
+
+{% block content %}
+<div class="collection-page">
+    <!-- Breadcrumb -->
+    <div class="collection-breadcrumb">
+        <div class="container">
+            <ul class="breadcrumb-list">
+                <li class="breadcrumb-item">
+                    <a href="{{ url_for('views.home') }}" class="breadcrumb-link">Home</a>
+                </li>
+                <li class="breadcrumb-item">
+                    <a href="{{ url_for('views.products') }}" class="breadcrumb-link">Products</a>
+                </li>
+                <li class="breadcrumb-item active">{{ collection.name }}</li>
+            </ul>
+        </div>
+    </div>
+
+    <!-- Collection Header -->
+    <div class="collection-header">
+        <div class="container">
+            <h1 class="collection-title">{{ collection.name }}</h1>
+            {% if collection.description %}
+            <div class="collection-description">
+                {{ collection.description }}
+            </div>
+            {% endif %}
+        </div>
+    </div>
+
+    <!-- Products Grid -->
+    <div class="collection-products">
+        <div class="container">
+            {% if collection.products %}
+            <div class="products-grid">
+                {% for product in collection.products %}
+                <div class="product-card">
+                    <a href="{{ url_for('views.product_detail', product_id=product.id) }}" class="product-link">
+                        <div class="product-image">
+                            {% if product.images %}
+                            <img src="{{ url_for('static', filename='img/products/' + product.images[0].image_url) }}" alt="{{ product.name }}">
+                            {% endif %}
+                        </div>
+                        <div class="product-info">
+                            <h3 class="product-name">{{ product.name }}</h3>
+                            <p class="product-price">{{ "{:,.0f}".format(product.price) }} VND</p>
+                        </div>
+                    </a>
+                </div>
+                {% endfor %}
+            </div>
+            {% else %}
+            <div class="no-products">
+                <p>No products found in this collection.</p>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}

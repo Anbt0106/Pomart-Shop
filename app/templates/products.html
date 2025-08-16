@@ -23,7 +23,7 @@
         <!-- Products Grid -->
         <div class="products-grid" id="productsGrid">
             {% for product in products %}
-            <div class="product-card" data-stock="{{ product.stock }}" data-price="{{ product.price }}" data-date-released="{{ product.date_released.isoformat() if product.date_released else '' }}" data-created-at="{{ product.created_at.isoformat() }}">
+            <div class="product-card" data-stock="{{ product.stock }}" data-price="{{ product.price }}" data-date-released="{{ product.date_released.isoformat() if product.date_released else '' }}" data-created-at="{{ product.created_at.isoformat() }}" data-product-url="{{ url_for('views.product_detail', product_id=product.id) }}">
                 <div class="product-image">
                     {% if product.images %}
                     <img src="{{ url_for('static', filename='img/products/' + product.images[0].image_url) }}" alt="{{ product.name }}">
@@ -55,7 +55,7 @@
     </div>
 </div>
 
-<!-- JavaScript for Sorting -->
+<!-- JavaScript for Sorting and Product Navigation -->
 <script>
 document.getElementById('sortSelect').addEventListener('change', function() {
     const sortBy = this.value;
@@ -100,6 +100,19 @@ document.getElementById('sortSelect').addEventListener('change', function() {
     // Clear and re-append sorted products
     productsGrid.innerHTML = '';
     products.forEach(product => productsGrid.appendChild(product));
+});
+
+// Add click event listeners to product cards
+document.addEventListener('DOMContentLoaded', function() {
+    const productCards = document.querySelectorAll('.product-card');
+    productCards.forEach(card => {
+        card.addEventListener('click', function() {
+            const productUrl = this.dataset.productUrl;
+            if (productUrl) {
+                window.location.href = productUrl;
+            }
+        });
+    });
 });
 </script>
 {% endblock %}
