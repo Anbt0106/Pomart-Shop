@@ -1,0 +1,1329 @@
+{% extends "layout_admin.html" %}
+
+{% block title %}Chi tiết đơn hàng #{{ order.id }}{% endblock %}
+
+{% block content %}
+<style>
+/* Order Detail Page Styles */
+.order-detail-container {
+    padding: 20px;
+    background-color: #f8f9fa;
+    min-height: 100vh;
+}
+
+.page-header {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    padding: 20px 25px;
+    border-radius: 15px;
+    margin-bottom: 25px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+}
+
+.page-title {
+    margin: 0;
+    font-weight: 700;
+    font-size: 1.8rem;
+}
+
+.btn-back {
+    background-color: rgba(255, 255, 255, 0.2);
+    border: 2px solid rgba(255, 255, 255, 0.3);
+    color: white;
+    padding: 10px 20px;
+    border-radius: 8px;
+    text-decoration: none;
+    transition: all 0.3s ease;
+    font-weight: 600;
+}
+
+.btn-back:hover {
+    background-color: rgba(255, 255, 255, 0.3);
+    color: white;
+    transform: translateY(-2px);
+}
+
+.detail-card {
+    background: white;
+    border: none;
+    border-radius: 15px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+    margin-bottom: 25px;
+    overflow: hidden;
+}
+
+.detail-card-header {
+    background: linear-gradient(135deg, #3742fa 0%, #2f3542 100%);
+    color: white;
+    padding: 18px 25px;
+    border: none;
+}
+
+.detail-card-title {
+    margin: 0;
+    font-weight: 600;
+    font-size: 1.2rem;
+}
+
+.detail-card-body {
+    padding: 25px;
+}
+
+.info-table {
+    margin: 0;
+}
+
+.info-table td {
+    padding: 12px 0;
+    border: none;
+    vertical-align: top;
+}
+
+.info-table td:first-child {
+    font-weight: 600;
+    color: #495057;
+    width: 150px;
+    padding-right: 20px;
+}
+
+.info-table td:last-child {
+    color: #2c3e50;
+}
+
+.order-status-badge {
+    padding: 8px 18px;
+    border-radius: 25px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    display: inline-block;
+}
+
+.status-pending {
+    background: linear-gradient(135deg, #ffeaa7 0%, #fdcb6e 100%);
+    color: #2d3436;
+}
+
+.status-shipped {
+    background: linear-gradient(135deg, #74b9ff 0%, #0984e3 100%);
+    color: white;
+}
+
+.status-delivered {
+    background: linear-gradient(135deg, #00b894 0%, #00a085 100%);
+    color: white;
+}
+
+.status-canceled {
+    background: linear-gradient(135deg, #e17055 0%, #d63031 100%);
+    color: white;
+}
+
+.payment-unpaid {
+    background: linear-gradient(135deg, #ffeaa7 0%, #fdcb6e 100%);
+    color: #2d3436;
+}
+
+.payment-paid {
+    background: linear-gradient(135deg, #00b894 0%, #00a085 100%);
+    color: white;
+}
+
+.payment-refunded {
+    background: linear-gradient(135deg, #636e72 0%, #2d3436 100%);
+    color: white;
+}
+
+.total-amount {
+    font-size: 1.4rem;
+    font-weight: 700;
+    color: #667eea;
+}
+
+.quick-actions {
+    margin-top: 20px;
+    padding: 20px;
+    background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+    border-radius: 10px;
+}
+
+.quick-actions h6 {
+    color: #495057;
+    font-weight: 700;
+    margin-bottom: 15px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    font-size: 0.8rem;
+}
+
+.action-btn-group {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-bottom: 15px;
+}
+
+.action-btn {
+    padding: 8px 16px;
+    border: none;
+    border-radius: 20px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.action-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.btn-pending {
+    background: linear-gradient(135deg, #ffeaa7 0%, #fdcb6e 100%);
+    color: #2d3436;
+}
+
+.btn-shipped {
+    background: linear-gradient(135deg, #74b9ff 0%, #0984e3 100%);
+    color: white;
+}
+
+.btn-delivered {
+    background: linear-gradient(135deg, #00b894 0%, #00a085 100%);
+    color: white;
+}
+
+.btn-canceled {
+    background: linear-gradient(135deg, #e17055 0%, #d63031 100%);
+    color: white;
+}
+
+.btn-paid {
+    background: linear-gradient(135deg, #00b894 0%, #00a085 100%);
+    color: white;
+}
+
+.btn-unpaid {
+    background: linear-gradient(135deg, #ffeaa7 0%, #fdcb6e 100%);
+    color: #2d3436;
+}
+
+.btn-refunded {
+    background: linear-gradient(135deg, #636e72 0%, #2d3436 100%);
+    color: white;
+}
+
+.customer-card {
+    background: linear-gradient(135deg, #a29bfe 0%, #6c5ce7 100%);
+    color: white;
+}
+
+.customer-card .detail-card-header {
+    background: rgba(255, 255, 255, 0.1);
+}
+
+.customer-card .info-table td {
+    color: white;
+}
+
+.customer-card .info-table td:first-child {
+    color: rgba(255, 255, 255, 0.8);
+}
+
+.btn-customer-link {
+    background: rgba(255, 255, 255, 0.2);
+    border: 2px solid rgba(255, 255, 255, 0.3);
+    color: white;
+    padding: 8px 16px;
+    border-radius: 20px;
+    text-decoration: none;
+    font-size: 0.85rem;
+    font-weight: 600;
+    transition: all 0.3s ease;
+}
+
+.btn-customer-link:hover {
+    background: rgba(255, 255, 255, 0.3);
+    color: white;
+    transform: translateY(-2px);
+}
+
+.items-table {
+    background: white;
+    border-radius: 10px;
+    overflow: hidden;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+}
+
+.items-table thead th {
+    background: linear-gradient(135deg, #2d3436 0%, #636e72 100%);
+    color: white;
+    border: none;
+    font-weight: 600;
+    padding: 18px 15px;
+    text-transform: uppercase;
+    font-size: 0.8rem;
+    letter-spacing: 1px;
+}
+
+.items-table tbody td {
+    padding: 20px 15px;
+    vertical-align: middle;
+    border-bottom: 1px solid #f1f3f4;
+}
+
+.items-table tbody tr:hover {
+    background-color: #f8f9fa;
+    transition: background-color 0.3s ease;
+}
+
+.product-info {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.product-image {
+    width: 60px;
+    height: 60px;
+    border-radius: 8px;
+    object-fit: cover;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.product-details h6 {
+    margin: 0 0 5px 0;
+    font-weight: 600;
+    color: #2c3e50;
+}
+
+.product-id {
+    font-size: 0.8rem;
+    color: #6c757d;
+    font-weight: 500;
+}
+
+.item-price {
+    font-weight: 600;
+    color: #495057;
+    font-size: 1rem;
+}
+
+.item-quantity {
+    background: linear-gradient(135deg, #74b9ff 0%, #0984e3 100%);
+    color: white;
+    padding: 6px 12px;
+    border-radius: 15px;
+    font-weight: 600;
+    font-size: 0.9rem;
+}
+
+.item-total {
+    font-weight: 700;
+    color: #667eea;
+    font-size: 1.1rem;
+}
+
+.items-table tfoot th {
+    background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+    padding: 20px 15px;
+    border: none;
+    color: #495057;
+    font-weight: 700;
+}
+
+.grand-total {
+    color: #667eea;
+    font-size: 1.3rem;
+}
+
+.timeline-card {
+    background: linear-gradient(135deg, #fd79a8 0%, #e84393 100%);
+    color: white;
+}
+
+.timeline-card .detail-card-header {
+    background: rgba(255, 255, 255, 0.1);
+}
+
+.timeline {
+    position: relative;
+    padding-left: 35px;
+    margin-top: 20px;
+}
+
+.timeline::before {
+    content: '';
+    position: absolute;
+    left: -35px;
+    top: 0;
+    bottom: 0;
+    width: 3px;
+    background: linear-gradient(to bottom, #74b9ff, #00b894);
+    border-radius: 2px;
+}
+
+.timeline-item {
+    position: relative;
+    margin-bottom: 30px;
+    background: rgba(255, 255, 255, 0.1);
+    padding: 20px;
+    border-radius: 10px;
+    backdrop-filter: blur(10px);
+}
+
+.timeline-marker {
+    position: absolute;
+    left: -46px;
+    top: 25px;
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    border: 4px solid white;
+    box-shadow: 0 0 0 4px #74b9ff;
+}
+
+.timeline-marker.bg-success {
+    background-color: #00b894;
+    box-shadow: 0 0 0 4px #00b894;
+}
+
+.timeline-marker.bg-primary {
+    background-color: #74b9ff;
+    box-shadow: 0 0 0 4px #74b9ff;
+}
+
+.timeline-content h6 {
+    color: white;
+    font-weight: 700;
+    margin-bottom: 8px;
+    font-size: 1.1rem;
+}
+
+.timeline-content p {
+    color: rgba(255, 255, 255, 0.8);
+    margin: 0;
+    font-size: 0.9rem;
+}
+
+.empty-items {
+    text-align: center;
+    padding: 60px 20px;
+    color: #6c757d;
+}
+
+.empty-items i {
+    font-size: 4rem;
+    margin-bottom: 20px;
+    opacity: 0.3;
+}
+
+/* Shipping Card Styles */
+.shipping-card {
+    background: linear-gradient(135deg, #00cec9 0%, #00b894 100%);
+    color: white;
+}
+
+.shipping-card .detail-card-header {
+    background: rgba(255, 255, 255, 0.1);
+}
+
+.shipping-card .info-table td {
+    color: white;
+}
+
+.shipping-card .info-table td:first-child {
+    color: rgba(255, 255, 255, 0.8);
+}
+
+.shipping-fee {
+    font-weight: 700;
+    color: #fdcb6e;
+}
+
+.tracking-number {
+    background: rgba(255, 255, 255, 0.2);
+    padding: 4px 12px;
+    border-radius: 15px;
+    font-family: 'Courier New', monospace;
+    letter-spacing: 1px;
+}
+
+.btn-update-tracking, .btn-estimate-delivery, .btn-add-notes {
+    background: linear-gradient(135deg, #74b9ff 0%, #0984e3 100%);
+    color: white;
+}
+
+.btn-update-tracking:hover, .btn-estimate-delivery:hover, .btn-add-notes:hover {
+    background: linear-gradient(135deg, #0984e3 0%, #74b9ff 100%);
+}
+
+/* Address Card Styles */
+.address-card {
+    background: linear-gradient(135deg, #fab1a0 0%, #e17055 100%);
+    color: white;
+}
+
+.address-card .detail-card-header {
+    background: rgba(255, 255, 255, 0.1);
+}
+
+.address-card .info-table td {
+    color: white;
+}
+
+.address-card .info-table td:first-child {
+    color: rgba(255, 255, 255, 0.8);
+}
+
+/* Shipping Contact and Address Sections */
+.shipping-contact-section, .shipping-address-section {
+    margin-bottom: 25px;
+}
+
+.shipping-section-title {
+    color: rgba(255, 255, 255, 0.9);
+    font-size: 1rem;
+    font-weight: 700;
+    margin-bottom: 15px;
+    padding-bottom: 8px;
+    border-bottom: 2px solid rgba(255, 255, 255, 0.2);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.contact-info-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 15px;
+}
+
+.contact-item {
+    display: flex;
+    align-items: center;
+    background: rgba(255, 255, 255, 0.1);
+    padding: 15px;
+    border-radius: 12px;
+    backdrop-filter: blur(5px);
+    transition: all 0.3s ease;
+}
+
+.contact-item:hover {
+    background: rgba(255, 255, 255, 0.15);
+    transform: translateY(-2px);
+}
+
+.contact-icon {
+    width: 45px;
+    height: 45px;
+    background: rgba(255, 255, 255, 0.2);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-right: 15px;
+    font-size: 1.2rem;
+    color: white;
+}
+
+.contact-details {
+    flex: 1;
+}
+
+.contact-details label {
+    display: block;
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: rgba(255, 255, 255, 0.7);
+    margin-bottom: 4px;
+    font-weight: 600;
+}
+
+.contact-value {
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: white;
+    display: block;
+}
+
+.phone-number {
+    font-family: 'Courier New', monospace;
+    letter-spacing: 1px;
+}
+
+.address-display {
+    background: rgba(255, 255, 255, 0.1);
+    padding: 20px;
+    border-radius: 12px;
+    backdrop-filter: blur(5px);
+}
+
+.address-main {
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: white;
+    margin-bottom: 15px;
+    padding-bottom: 15px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+    display: flex;
+    align-items: flex-start;
+}
+
+.address-main i {
+    margin-top: 3px;
+    color: rgba(255, 255, 255, 0.8);
+}
+
+.address-details {
+    display: grid;
+    gap: 8px;
+}
+
+.address-row {
+    display: flex;
+    align-items: center;
+    color: rgba(255, 255, 255, 0.9);
+    font-size: 0.95rem;
+}
+
+.address-row i {
+    width: 20px;
+    color: rgba(255, 255, 255, 0.7);
+}
+
+.address-row strong {
+    color: rgba(255, 255, 255, 0.8);
+    margin-right: 8px;
+}
+
+.address-actions {
+    margin-top: 20px;
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+
+.btn-address-action {
+    background: rgba(255, 255, 255, 0.2);
+    border: 2px solid rgba(255, 255, 255, 0.3);
+    color: white;
+    padding: 8px 16px;
+    border-radius: 20px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.btn-address-action:hover {
+    background: rgba(255, 255, 255, 0.3);
+    color: white;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: 1000;
+    display: none;
+}
+
+.modal-content {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: white;
+    border-radius: 15px;
+    width: 90%;
+    max-width: 500px;
+    max-height: 90vh;
+    overflow-y: auto;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+}
+
+.modal-header {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    padding: 20px 25px;
+    border-radius: 15px 15px 0 0;
+}
+
+.modal-title {
+    margin: 0;
+    font-weight: 600;
+    font-size: 1.2rem;
+}
+
+.modal-close {
+    background: none;
+    border: none;
+    color: white;
+    font-size: 1.5rem;
+    cursor: pointer;
+    float: right;
+    margin-top: -5px;
+}
+
+.modal-body {
+    padding: 25px;
+}
+
+.modal-footer {
+    padding: 20px 25px;
+    border-top: 1px solid #e9ecef;
+    display: flex;
+    gap: 10px;
+    justify-content: flex-end;
+}
+
+.form-group {
+    margin-bottom: 20px;
+}
+
+.form-label {
+    font-weight: 600;
+    color: #495057;
+    margin-bottom: 8px;
+    display: block;
+}
+
+.form-control {
+    width: 100%;
+    padding: 12px 15px;
+    border: 2px solid #e9ecef;
+    border-radius: 8px;
+    font-size: 0.95rem;
+    transition: border-color 0.3s ease;
+}
+
+.form-control:focus {
+    outline: none;
+    border-color: #667eea;
+    box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+}
+
+.btn-modal {
+    padding: 10px 20px;
+    border: none;
+    border-radius: 8px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.btn-primary {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+}
+
+.btn-secondary {
+    background: #6c757d;
+    color: white;
+}
+
+.btn-modal:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+@media (max-width: 768px) {
+    .order-detail-container {
+        padding: 10px;
+    }
+
+    .page-header {
+        padding: 15px 20px;
+    }
+
+    .page-title {
+        font-size: 1.5rem;
+    }
+
+    .detail-card-body {
+        padding: 20px;
+    }
+
+    .action-btn-group {
+        flex-direction: column;
+    }
+
+    .action-btn {
+        width: 100%;
+        margin-bottom: 5px;
+    }
+
+    .product-info {
+        flex-direction: column;
+        text-align: center;
+    }
+
+    .items-table {
+        font-size: 0.85rem;
+    }
+
+    .timeline {
+        padding-left: 25px;
+    }
+
+    .timeline-marker {
+        left: -36px;
+        width: 16px;
+        height: 16px;
+    }
+
+    .modal-content {
+        width: 95%;
+        margin: 20px;
+    }
+}
+</style>
+
+<div class="order-detail-container">
+
+    <div class="admin-header">
+        <h1>Chi tiết đơn hàng</h1>
+        <div class="admin-actions">
+            <a href="{{ url_for('admin.orders_list') }}" class="btn btn-primary">
+                 Quay lại
+            </a>
+        </div>
+    </div>
+
+    <div class="row">
+        <!-- Order Information -->
+        <div class="col-md-6">
+            <div class="detail-card">
+                <div class="detail-card-header">
+                    <h5 class="detail-card-title">
+                        <i class="fas fa-info-circle me-2"></i>
+                        Thông tin đơn hàng
+                    </h5>
+                </div>
+                <div class="detail-card-body">
+                    <table class="info-table w-100">
+                        <tr>
+                            <td><i class="fas fa-hashtag me-2"></i><strong>Mã đơn hàng:</strong></td>
+                            <td><strong>#{{ order.id }}</strong></td>
+                        </tr>
+                        <tr>
+                            <td><i class="fas fa-calendar me-2"></i><strong>Ngày đặt:</strong></td>
+                            <td>{{ order.placed_at.strftime('%d/%m/%Y %H:%M') }}</td>
+                        </tr>
+                        <tr>
+                            <td><i class="fas fa-info-circle me-2"></i><strong>Trạng thái:</strong></td>
+                            <td>
+                                <span class="order-status-badge status-{{ order.status }}" id="order-status-badge">
+                                    {% if order.status == 'pending' %}⏳{% elif order.status == 'shipped' %}🚚{% elif order.status == 'delivered' %}✅{% elif order.status == 'canceled' %}❌{% endif %}
+                                    {{ order.status_display }}
+                                </span>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td><i class="fas fa-credit-card me-2"></i><strong>Thanh toán:</strong></td>
+                            <td>
+                                <span class="order-status-badge payment-{{ order.payment_status }}" id="payment-status-badge">
+                                    {% if order.payment_status == 'unpaid' %}⏳{% elif order.payment_status == 'paid' %}✅{% elif order.payment_status == 'refunded' %}🔄{% endif %}
+                                    {{ order.payment_status_display }}
+                                </span>
+                            </td>
+                        </tr>
+                        {% if order.paid_at %}
+                        <tr>
+                            <td><i class="fas fa-check me-2"></i><strong>Ngày thanh toán:</strong></td>
+                            <td>{{ order.paid_at.strftime('%d/%m/%Y %H:%M') }}</td>
+                        </tr>
+                        {% endif %}
+                        <tr>
+                            <td><i class="fas fa-money-bill-wave me-2"></i><strong>Tổng tiền:</strong></td>
+                            <td><span class="total-amount">{{ "{:,.0f}".format(order.total_amount) }} VNĐ</span></td>
+                        </tr>
+                    </table>
+
+                    <!-- Quick Actions -->
+                    <div class="quick-actions">
+                        <h6><i class="fas fa-bolt me-2"></i>Cập nhật nhanh</h6>
+                        <div class="action-btn-group">
+                            <button type="button" class="action-btn btn-pending"
+                                    onclick="updateOrderStatus({{ order.id }}, 'pending')">
+                                ⏳ Chờ xử lý
+                            </button>
+                            <button type="button" class="action-btn btn-shipped"
+                                    onclick="updateOrderStatus({{ order.id }}, 'shipped')">
+                                🚚 Đã gửi hàng
+                            </button>
+                            <button type="button" class="action-btn btn-delivered"
+                                    onclick="updateOrderStatus({{ order.id }}, 'delivered')">
+                                ✅ Đã giao hàng
+                            </button>
+                            <button type="button" class="action-btn btn-canceled"
+                                    onclick="updateOrderStatus({{ order.id }}, 'canceled')">
+                                ❌ Hủy đơn
+                            </button>
+                        </div>
+                        <div class="action-btn-group">
+                            <button type="button" class="action-btn btn-paid"
+                                    onclick="updatePaymentStatus({{ order.id }}, 'paid')">
+                                ✅ Đã thanh toán
+                            </button>
+                            <button type="button" class="action-btn btn-unpaid"
+                                    onclick="updatePaymentStatus({{ order.id }}, 'unpaid')">
+                                ⏳ Chưa thanh toán
+                            </button>
+                            <button type="button" class="action-btn btn-refunded"
+                                    onclick="updatePaymentStatus({{ order.id }}, 'refunded')">
+                                🔄 Hoàn tiền
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Shipping Information -->
+        <div class="col-md-6">
+            <div class="detail-card shipping-card">
+                <div class="detail-card-header">
+                    <h5 class="detail-card-title">
+                        <i class="fas fa-shipping-fast me-2"></i>
+                        Thông tin vận chuyển
+                    </h5>
+                </div>
+                <div class="detail-card-body">
+                    <table class="info-table w-100">
+                        <tr>
+                            <td><i class="fas fa-truck me-2"></i><strong>Phương thức:</strong></td>
+                            <td>{{ order.shipping_method or 'Giao hàng tiêu chuẩn' }}</td>
+                        </tr>
+                        <tr>
+                            <td><i class="fas fa-dollar-sign me-2"></i><strong>Phí vận chuyển:</strong></td>
+                            <td><span class="shipping-fee">{{ "{:,.0f}".format(order.shipping_fee or 30000) }} VNĐ</span></td>
+                        </tr>
+                        {% if order.tracking_number %}
+                        <tr>
+                            <td><i class="fas fa-barcode me-2"></i><strong>Mã vận đơn:</strong></td>
+                            <td><strong class="tracking-number">{{ order.tracking_number }}</strong></td>
+                        </tr>
+                        {% endif %}
+                        {% if order.estimated_delivery %}
+                        <tr>
+                            <td><i class="fas fa-clock me-2"></i><strong>Dự kiến giao:</strong></td>
+                            <td>{{ order.estimated_delivery.strftime('%d/%m/%Y %H:%M') }}</td>
+                        </tr>
+                        {% endif %}
+                        {% if order.shipped_at %}
+                        <tr>
+                            <td><i class="fas fa-truck-loading me-2"></i><strong>Ngày gửi hàng:</strong></td>
+                            <td>{{ order.shipped_at.strftime('%d/%m/%Y %H:%M') }}</td>
+                        </tr>
+                        {% endif %}
+                        {% if order.delivered_at %}
+                        <tr>
+                            <td><i class="fas fa-check-circle me-2"></i><strong>Ngày giao hàng:</strong></td>
+                            <td>{{ order.delivered_at.strftime('%d/%m/%Y %H:%M') }}</td>
+                        </tr>
+                        {% endif %}
+                        {% if order.shipping_notes %}
+                        <tr>
+                            <td><i class="fas fa-sticky-note me-2"></i><strong>Ghi chú:</strong></td>
+                            <td>{{ order.shipping_notes }}</td>
+                        </tr>
+                        {% endif %}
+                    </table>
+
+                    <!-- Shipping Quick Actions -->
+                    <div class="quick-actions">
+                        <h6><i class="fas fa-shipping-fast me-2"></i>Cập nhật vận chuyển</h6>
+                        <div class="action-btn-group">
+                            <button type="button" class="action-btn btn-update-tracking"
+                                    onclick="showTrackingModal({{ order.id }})">
+                                📦 Cập nhật mã vận đơn
+                            </button>
+                            <button type="button" class="action-btn btn-estimate-delivery"
+                                    onclick="showDeliveryModal({{ order.id }})">
+                                🕒 Cập nhật thời gian giao
+                            </button>
+                        </div>
+                        <div class="action-btn-group">
+                            <button type="button" class="action-btn btn-add-notes"
+                                    onclick="showNotesModal({{ order.id }})">
+                                📝 Thêm ghi chú
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row mt-4">
+        <!-- Customer Information -->
+        <div class="col-md-6">
+            <div class="detail-card customer-card">
+                <div class="detail-card-header">
+                    <h5 class="detail-card-title">
+                        <i class="fas fa-user me-2"></i>
+                        Thông tin khách hàng
+                    </h5>
+                </div>
+                <div class="detail-card-body">
+                    <table class="info-table w-100">
+                        <tr>
+                            <td><i class="fas fa-user me-2"></i><strong>Họ tên:</strong></td>
+                            <td>{{ order.user.full_name }}</td>
+                        </tr>
+                        <tr>
+                            <td><i class="fas fa-envelope me-2"></i><strong>Email:</strong></td>
+                            <td>{{ order.user.email }}</td>
+                        </tr>
+                        <tr>
+                            <td><i class="fas fa-at me-2"></i><strong>Username:</strong></td>
+                            <td>{{ order.user.username }}</td>
+                        </tr>
+                        <tr>
+                            <td><i class="fas fa-calendar-plus me-2"></i><strong>Ngày tạo tài khoản:</strong></td>
+                            <td>{{ order.user.created_at.strftime('%d/%m/%Y') }}</td>
+                        </tr>
+                    </table>
+
+                    <div class="mt-3">
+                        <a href="{{ url_for('admin.users_list') }}?search={{ order.user.username }}"
+                           class="btn-customer-link">
+                            <i class="fas fa-user me-1"></i> Xem thông tin khách hàng
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Delivery Address -->
+        <div class="col-md-6">
+            <div class="detail-card address-card">
+                <div class="detail-card-header">
+                    <h5 class="detail-card-title">
+                        <i class="fas fa-map-marker-alt me-2"></i>
+                        Thông tin vận chuyển
+                    </h5>
+                </div>
+                <div class="detail-card-body">
+                    {% if order.shipping_address %}
+                    <!-- Contact Information -->
+                    <div class="shipping-contact-section">
+                        <h6 class="shipping-section-title">
+                            <i class="fas fa-user-circle me-2"></i>Thông tin người nhận
+                        </h6>
+                        <div class="contact-info-grid">
+                            <div class="contact-item">
+                                <div class="contact-icon">
+                                    <i class="fas fa-user"></i>
+                                </div>
+                                <div class="contact-details">
+                                    <label>Họ và tên</label>
+                                    <span class="contact-value">{{ order.shipping_address.recipient_name }}</span>
+                                </div>
+                            </div>
+                            <div class="contact-item">
+                                <div class="contact-icon">
+                                    <i class="fas fa-phone"></i>
+                                </div>
+                                <div class="contact-details">
+                                    <label>Số điện thoại</label>
+                                    <span class="contact-value phone-number">{{ order.shipping_address.phone_number }}</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Address Information -->
+                    <div class="shipping-address-section">
+                        <h6 class="shipping-section-title">
+                            <i class="fas fa-map-marked-alt me-2"></i>Địa chỉ giao hàng
+                        </h6>
+                        <div class="address-display">
+                            <div class="address-main">
+                                <i class="fas fa-home me-2"></i>
+                                <span>{{ order.shipping_address.address }}</span>
+                            </div>
+                            <div class="address-details">
+                                <div class="address-row">
+                                    <i class="fas fa-city me-2"></i>
+                                    <strong>Thành phố:</strong> {{ order.shipping_address.city }}
+                                </div>
+                                {% if order.shipping_address.postal_code %}
+                                <div class="address-row">
+                                    <i class="fas fa-mail-bulk me-2"></i>
+                                    <strong>Mã bưu điện:</strong> {{ order.shipping_address.postal_code }}
+                                </div>
+                                {% endif %}
+                                {% if order.shipping_address.country %}
+                                <div class="address-row">
+                                    <i class="fas fa-flag me-2"></i>
+                                    <strong>Quốc gia:</strong> {{ order.shipping_address.country }}
+                                </div>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Quick Actions for Address -->
+                    <div class="address-actions">
+                        <button type="button" class="btn-address-action" onclick="copyAddress()">
+                            <i class="fas fa-copy me-1"></i> Sao chép địa chỉ
+                        </button>
+                        <button type="button" class="btn-address-action" onclick="openInMaps()">
+                            <i class="fas fa-map me-1"></i> Xem bản đồ
+                        </button>
+                    </div>
+                    {% else %}
+                    <div class="empty-items">
+                        <i class="fas fa-map-marker-alt"></i>
+                        <h5>Không có thông tin vận chuyển</h5>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Order Items -->
+    <div class="row mt-4">
+        <div class="col-12">
+            <div class="detail-card">
+                <div class="detail-card-header">
+                    <h5 class="detail-card-title">
+                        <i class="fas fa-shopping-bag me-2"></i>
+                        Sản phẩm trong đơn hàng
+                    </h5>
+                </div>
+                <div class="detail-card-body">
+                    {% if order.items %}
+                    <div class="table-responsive">
+                        <table class="table items-table">
+                            <thead>
+                                <tr>
+                                    <th><i class="fas fa-box me-1"></i> Sản phẩm</th>
+                                    <th><i class="fas fa-tag me-1"></i> Đơn giá</th>
+                                    <th><i class="fas fa-sort-numeric-up me-1"></i> Số lượng</th>
+                                    <th><i class="fas fa-calculator me-1"></i> Thành tiền</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for item in order.items %}
+                                <tr>
+                                    <td>
+                                        <div class="product-info">
+                                            {% if item.product.images %}
+                                                <img src="{{ url_for('static', filename='img/products/' + item.product.images[0].image_url) }}"
+                                                     alt="{{ item.product.name }}"
+                                                     class="product-image">
+                                            {% endif %}
+                                            <div class="product-details">
+                                                <h6>{{ item.product.name }}</h6>
+                                                <small class="product-id">ID: {{ item.product.id }}</small>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td><span class="item-price">{{ "{:,.0f}".format(item.price) }} VNĐ</span></td>
+                                    <td><span class="item-quantity">{{ item.quantity }}</span></td>
+                                    <td><span class="item-total">{{ "{:,.0f}".format(item.price * item.quantity) }} VNĐ</span></td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                            <tfoot>
+                                <tr>
+                                    <th colspan="3" class="text-end">
+                                        <i class="fas fa-calculator me-2"></i>Tổng cộng:
+                                    </th>
+                                    <th><span class="grand-total">{{ "{:,.0f}".format(order.total_amount) }} VNĐ</span></th>
+                                </tr>
+                            </tfoot>
+                        </table>
+                    </div>
+                    {% else %}
+                    <div class="empty-items">
+                        <i class="fas fa-box-open"></i>
+                        <h5>Không có sản phẩm</h5>
+                        <p>Không có sản phẩm nào trong đơn hàng này.</p>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Order History / Timeline -->
+    <div class="row mt-4">
+        <div class="col-12">
+            <div class="detail-card timeline-card">
+                <div class="detail-card-header">
+                    <h5 class="detail-card-title">
+                        <i class="fas fa-history me-2"></i>
+                        Lịch sử đơn hàng
+                    </h5>
+                </div>
+                <div class="detail-card-body">
+                    <div class="timeline">
+                        <div class="timeline-item">
+                            <div class="timeline-marker bg-primary"></div>
+                            <div class="timeline-content">
+                                <h6><i class="fas fa-plus-circle me-2"></i>Đơn hàng được tạo</h6>
+                                <p>{{ order.placed_at.strftime('%d/%m/%Y %H:%M') }}</p>
+                            </div>
+                        </div>
+
+                        {% if order.paid_at %}
+                        <div class="timeline-item">
+                            <div class="timeline-marker bg-success"></div>
+                            <div class="timeline-content">
+                                <h6><i class="fas fa-check-circle me-2"></i>Đã thanh toán</h6>
+                                <p>{{ order.paid_at.strftime('%d/%m/%Y %H:%M') }}</p>
+                            </div>
+                        </div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+function updateOrderStatus(orderId, status) {
+    if (confirm('Bạn có chắc chắn muốn cập nhật trạng thái đơn hàng?')) {
+        fetch(`/admin/orders/${orderId}/update-status`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ status: status })
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                alert(data.message);
+                document.getElementById('order-status-badge').textContent = data.new_status_display;
+                document.getElementById('order-status-badge').className = `badge ${getStatusBadgeClass(data.new_status)}`;
+            } else {
+                alert('Lỗi: ' + data.message);
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            alert('Có lỗi xảy ra khi cập nhật trạng thái');
+        });
+    }
+}
+
+function updatePaymentStatus(orderId, paymentStatus) {
+    if (confirm('Bạn có chắc chắn muốn cập nhật trạng thái thanh toán?')) {
+        fetch(`/admin/orders/${orderId}/update-payment`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ payment_status: paymentStatus })
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                alert(data.message);
+                document.getElementById('payment-status-badge').textContent = data.new_payment_status_display;
+                document.getElementById('payment-status-badge').className = `badge ${getPaymentBadgeClass(data.new_payment_status)}`;
+            } else {
+                alert('Lỗi: ' + data.message);
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            alert('Có lỗi xảy ra khi cập nhật trạng thái thanh toán');
+        });
+    }
+}
+
+function getStatusBadgeClass(status) {
+    const classes = {
+        'pending': 'bg-warning',
+        'shipped': 'bg-info',
+        'delivered': 'bg-success',
+        'canceled': 'bg-danger'
+    };
+    return classes[status] || 'bg-secondary';
+}
+
+function getPaymentBadgeClass(paymentStatus) {
+    const classes = {
+        'unpaid': 'bg-warning',
+        'paid': 'bg-success',
+        'refunded': 'bg-secondary'
+    };
+    return classes[paymentStatus] || 'bg-secondary';
+}
+
+// Address utility functions
+function copyAddress() {
+    const addressElements = {
+        name: '{{ order.shipping_address.recipient_name if order.shipping_address else "" }}',
+        phone: '{{ order.shipping_address.phone_number if order.shipping_address else "" }}',
+        address: '{{ order.shipping_address.address if order.shipping_address else "" }}',
+        city: '{{ order.shipping_address.city if order.shipping_address else "" }}',
+        postal: '{{ order.shipping_address.postal_code if order.shipping_address else "" }}',
+        country: '{{ order.shipping_address.country if order.shipping_address else "" }}'
+    };
+
+    let fullAddress = `Người nhận: ${addressElements.name}\n`;
+    fullAddress += `Số điện thoại: ${addressElements.phone}\n`;
+    fullAddress += `Địa chỉ: ${addressElements.address}\n`;
+    fullAddress += `Thành phố: ${addressElements.city}`;
+
+    if (addressElements.postal) {
+        fullAddress += `\nMã bưu điện: ${addressElements.postal}`;
+    }
+    if (addressElements.country) {
+        fullAddress += `\nQuốc gia: ${addressElements.country}`;
+    }
+
+    navigator.clipboard.writeText(fullAddress).then(() => {
+        alert('✅ Đã sao chép địa chỉ vào clipboard!');
+    }).catch(err => {
+        console.error('Error copying address:', err);
+        alert('❌ Không thể sao chép địa chỉ');
+    });
+}
+
+function openInMaps() {
+    const address = '{{ order.shipping_address.address if order.shipping_address else "" }}';
+    const city = '{{ order.shipping_address.city if order.shipping_address else "" }}';
+    const country = '{{ order.shipping_address.country if order.shipping_address else "Vietnam" }}';
+
+    const fullAddress = `${address}, ${city}, ${country}`;
+    const encodedAddress = encodeURIComponent(fullAddress);
+    const mapsUrl = `https://www.google.com/maps/search/?api=1&query=${encodedAddress}`;
+
+    window.open(mapsUrl, '_blank');
+}
+
+// Shipping modal functions (placeholder for future implementation)
+function showTrackingModal(orderId) {
+    alert('🚧 Tính năng cập nhật mã vận đơn sẽ được phát triển trong phiên bản tiếp theo!');
+}
+
+function showDeliveryModal(orderId) {
+    alert('🚧 Tính năng cập nhật thời gian giao hàng sẽ được phát triển trong phiên bản tiếp theo!');
+}
+
+function showNotesModal(orderId) {
+    alert('🚧 Tính năng thêm ghi chú vận chuyển sẽ được phát triển trong phiên bản tiếp theo!');
+}
+</script>
+{% endblock %}

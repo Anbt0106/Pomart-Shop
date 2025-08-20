@@ -350,46 +350,126 @@ def set_default_address(address_id):
         db.session.commit()
         
         flash('Đã đặt làm địa chỉ mặc định!', 'success')
-    else:
-        flash('Địa chỉ này đã là mặc định!', 'info')
-    
+
     return redirect(url_for('cart.manage_addresses'))
 
 @cart.route('/order-detail/<int:order_id>')
 @login_required
 def order_detail(order_id):
-    """Order detail page"""
+    """View detailed information of a specific order"""
     order = Order.query.filter_by(id=order_id, user_id=current_user.id).first_or_404()
     return render_template('order_detail.html', order=order)
 
+@cart.route('/cancel-order/<int:order_id>', methods=['POST'])
+@login_required
+def cancel_order(order_id):
+    """Cancel an order (only if pending and unpaid)"""
+    order = Order.query.filter_by(id=order_id, user_id=current_user.id).first_or_404()
+
+    if order.status != 'pending' or order.payment_status != 'unpaid':
+        flash('Không thể hủy đơn hàng này!', 'error')
+        return redirect(url_for('cart.my_orders'))
+
+    try:
+        # Restore product stock
+        for item in order.items:
+            item.product.stock += item.quantity
+
+        # Update order status
+        order.status = 'canceled'
+
+        # Update payment transaction status
+        for transaction in order.payment_transactions:
+            transaction.status = 'canceled'
+
+        db.session.commit()
+        flash('Đơn hàng đã được hủy thành công!', 'success')
+
+    except Exception as e:
+        db.session.rollback()
+        flash('Có lỗi xảy ra khi hủy đơn hàng!', 'error')
+        print(f"Error canceling order: {e}")
+
+    return redirect(url_for('cart.my_orders'))
+
+@cart.route('/reorder/<int:order_id>')
+@login_required
+def reorder(order_id):
+    """Add items from a previous order to cart"""
+    order = Order.query.filter_by(id=order_id, user_id=current_user.id).first_or_404()
+
+    if 'cart' not in session:
+        session['cart'] = {}
+
+    cart = session['cart']
+    items_added = 0
+
+    for item in order.items:
+        # Check if product is still available
+        if item.product.is_active and item.product.stock > 0:
+            product_id_str = str(item.product.id)
+            quantity_to_add = min(item.quantity, item.product.stock)
+
+            if product_id_str in cart:
+                # Check if we can add more
+                current_quantity = cart[product_id_str]['quantity']
+                max_addable = item.product.stock - current_quantity
+                if max_addable > 0:
+                    cart[product_id_str]['quantity'] += min(quantity_to_add, max_addable)
+                    items_added += 1
+            else:
+                cart[product_id_str] = {
+                    'quantity': quantity_to_add,
+                    'price': float(item.product.price)
+                }
+                items_added += 1
+
+    session['cart'] = cart
+    session.modified = True
+
+    if items_added > 0:
+        flash(f'Đã thêm {items_added} sản phẩm vào giỏ hàng!', 'success')
+    else:
+        flash('Không có sản phẩm nào có thể thêm vào giỏ hàng!', 'warning')
+
+    return redirect(url_for('cart.view_cart'))
+
 @cart.route('/apply-discount', methods=['POST'])
+@login_required
 def apply_discount():
-    """Apply discount code via AJAX"""
-    discount_code = request.form.get('discount_code')
-    
+    """Apply discount code during checkout"""
+    discount_code = request.form.get('discount_code', '').strip()
+
     if not discount_code:
-        return jsonify({'success': False, 'message': 'Please enter a discount code'})
-    
+        flash('Vui lòng nhập mã giảm giá!', 'error')
+        return redirect(url_for('cart.checkout'))
+
+    # Calculate current cart total
+    cart_total = 0
+    if 'cart' in session and session['cart']:
+        for product_id, item in session['cart'].items():
+            cart_total += item['price'] * item['quantity']
+
     discount = Discount.query.filter_by(code=discount_code).first()
     
     if not discount:
-        return jsonify({'success': False, 'message': 'Invalid discount code'})
-    
-    # Calculate cart total
-    subtotal = 0
-    if 'cart' in session:
-        for product_id, item in session['cart'].items():
-            subtotal += item['price'] * item['quantity']
-    
-    if not discount.is_valid(subtotal):
-        return jsonify({'success': False, 'message': 'Discount code not valid for this order amount'})
-    
-    discount_amount = discount.calculate_discount(subtotal)
-    final_total = subtotal - discount_amount
-    
-    return jsonify({
-        'success': True,
-        'discount_amount': discount_amount,
-        'final_total': final_total,
-        'message': f'Discount applied: {discount_amount:,.0f} VND'
-    })
+        flash('Mã giảm giá không tồn tại!', 'error')
+    elif not discount.is_valid(cart_total):
+        flash('Mã giảm giá không hợp lệ hoặc đã hết hạn!', 'error')
+    else:
+        # Store discount code in session for checkout
+        session['discount_code'] = discount_code
+        discount_amount = discount.calculate_discount(cart_total)
+        flash(f'Áp dụng mã giảm giá thành công! Giảm {"{:,.0f}".format(discount_amount)} VND', 'success')
+
+    return redirect(url_for('cart.checkout'))
+
+@cart.route('/remove-discount', methods=['POST'])
+@login_required
+def remove_discount():
+    """Remove applied discount code"""
+    if 'discount_code' in session:
+        session.pop('discount_code')
+        flash('Đã xóa mã giảm giá!', 'info')
+
+    return redirect(url_for('cart.checkout'))

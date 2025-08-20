@@ -3,139 +3,594 @@
 {% block title %}Tài khoản - Popmart{% endblock %}
 
 {% block content %}
-<div class="container mt-4">
-    <div class="row">
-        <div class="col-lg-3">
-            <div class="card">
-                <div class="card-header">
-                    <h5 class="mb-0">Tài khoản</h5>
-                </div>
-                <div class="card-body">
-                    <div class="text-center mb-3">
-                        <i class="fas fa-user-circle fa-3x text-primary"></i>
+
+<div class="grid">
+<div class="account-page">
+    <div class="container-fluid">
+        <div class="row min-vh-100">
+            <!-- User Info Header -->
+            <div class="col-12">
+                <div class="user-info-header">
+                    <div class="user-avatar">
+                        <i class="fas fa-user-circle"></i>
                     </div>
-                    <h6 class="text-center">{{ current_user.full_name }}</h6>
-                    <p class="text-muted text-center small">{{ current_user.email }}</p>
-                    
-                    <hr>
-                    
-                    <ul class="nav nav-pills flex-column">
-                        <li class="nav-item">
-                            <a class="nav-link active" href="#profile" data-bs-toggle="pill">
-                                <i class="fas fa-user me-2"></i>Thông tin cá nhân
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="#orders" data-bs-toggle="pill">
-                                <i class="fas fa-shopping-bag me-2"></i>Đơn hàng của tôi
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="#addresses" data-bs-toggle="pill">
-                                <i class="fas fa-map-marker-alt me-2"></i>Địa chỉ giao hàng
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="#settings" data-bs-toggle="pill">
-                                <i class="fas fa-cog me-2"></i>Cài đặt
-                            </a>
-                        </li>
-                    </ul>
+                    <div class="user-details">
+                        <h3>{{ current_user.full_name }}</h3>
+                        <p>{{ current_user.email }}</p>
+                        <span class="user-status {{ 'admin' if current_user.is_admin else 'member' }}">
+                            {{ 'Quản trị viên' if current_user.is_admin else 'Thành viên' }}
+                        </span>
+                    </div>
                 </div>
             </div>
-        </div>
-        
-        <div class="col-lg-9">
-            <div class="tab-content">
-                <!-- Profile Tab -->
-                <div class="tab-pane fade show active" id="profile">
-                    <div class="card">
-                        <div class="card-header">
-                            <h5 class="mb-0">Thông tin cá nhân</h5>
-                        </div>
-                        <div class="card-body">
+
+            <!-- Main Content - Two Columns -->
+            <div class="col-lg-6 col-md-6">
+                <div class="content-card">
+                    <div class="card-header">
+                        <h4><i class="fas fa-user"></i> Thông tin cá nhân</h4>
+                    </div>
+                    <div class="card-body">
+                        <form method="POST" action="{{ url_for('auth.update_profile') }}" id="profile-form">
                             <div class="row">
-                                <div class="col-md-6 mb-3">
-                                    <label class="form-label">Họ và tên</label>
-                                    <input type="text" class="form-control" value="{{ current_user.full_name }}" readonly>
+                                <div class="col-12 mb-3">
+                                    <label class="form-label">Tên <span class="required">*</span></label>
+                                    <input type="text" class="form-control" name="first_name"
+                                        value="{{ current_user.first_name }}" required>
                                 </div>
-                                <div class="col-md-6 mb-3">
-                                    <label class="form-label">Tên đăng nhập</label>
-                                    <input type="text" class="form-control" value="{{ current_user.username }}" readonly>
+                                <div class="col-12 mb-3">
+                                    <label class="form-label">Họ <span class="required">*</span></label>
+                                    <input type="text" class="form-control" name="last_name"
+                                        value="{{ current_user.last_name }}" required>
                                 </div>
-                                <div class="col-md-6 mb-3">
-                                    <label class="form-label">Email</label>
-                                    <input type="email" class="form-control" value="{{ current_user.email }}" readonly>
+                                <div class="col-12 mb-3">
+                                    <label class="form-label">Tên đăng nhập <span class="required">*</span></label>
+                                    <input type="text" class="form-control" name="username"
+                                        value="{{ current_user.username }}" required>
                                 </div>
-                                <div class="col-md-6 mb-3">
-                                    <label class="form-label">Trạng thái</label>
-                                    <input type="text" class="form-control" value="{{ current_user.get_status_display() }}" readonly>
+                                <div class="col-12 mb-3">
+                                    <label class="form-label">Email <span class="required">*</span></label>
+                                    <input type="email" class="form-control" name="email"
+                                        value="{{ current_user.email }}" required>
                                 </div>
-                                <div class="col-md-6 mb-3">
+                                <div class="col-12 mb-3">
                                     <label class="form-label">Ngày tham gia</label>
-                                    <input type="text" class="form-control" value="{{ current_user.created_at.strftime('%d/%m/%Y') }}" readonly>
+                                    <input type="text" class="form-control"
+                                        value="{{ current_user.created_at.strftime('%d/%m/%Y') }}" readonly>
                                 </div>
                             </div>
-                        </div>
+                            <div class="form-actions">
+                                <button type="submit" class="btn btn-primary">
+                                    <i class="fas fa-save"></i> Cập nhật thông tin
+                                </button>
+                                <button type="reset" class="btn btn-secondary">
+                                    <i class="fas fa-undo"></i> Hoàn tác
+                                </button>
+                            </div>
+                        </form>
                     </div>
                 </div>
-                
-                <!-- Orders Tab -->
-                <div class="tab-pane fade" id="orders">
-                    <div class="card">
-                        <div class="card-header d-flex justify-content-between align-items-center">
-                            <h5 class="mb-0">Đơn hàng của tôi</h5>
-                            <a href="{{ url_for('cart.my_orders') }}" class="btn btn-primary btn-sm">
-                                <i class="fas fa-list"></i> Xem tất cả
-                            </a>
-                        </div>
-                        <div class="card-body">
-                            <p class="text-muted">Quản lý và theo dõi đơn hàng của bạn</p>
-                            <a href="{{ url_for('cart.my_orders') }}" class="btn btn-outline-primary">
-                                <i class="fas fa-shopping-bag"></i> Xem đơn hàng
-                            </a>
-                        </div>
+            </div>
+
+            <div class="col-lg-6 col-md-6">
+                <div class="content-card">
+                    <div class="card-header">
+                        <h4><i class="fas fa-lock"></i> Đổi mật khẩu</h4>
+                    </div>
+                    <div class="card-body">
+                        <form method="POST" action="{{ url_for('auth.change_password') }}" id="password-form">
+                            <div class="row">
+                                <div class="col-12 mb-4">
+                                    <label class="form-label">Mật khẩu hiện tại <span class="required">*</span></label>
+                                    <div class="password-input">
+                                        <input type="password" class="form-control" name="current_password" required>
+                                        <button type="button" class="btn-toggle-password" onclick="togglePassword(this)">
+                                            <i class="fas fa-eye"></i>
+                                        </button>
+                                    </div>
+                                </div>
+
+                                <div class="col-12 mb-4">
+                                    <label class="form-label">Mật khẩu mới <span class="required">*</span></label>
+                                    <div class="password-input">
+                                        <input type="password" class="form-control" name="new_password" required>
+                                        <button type="button" class="btn-toggle-password" onclick="togglePassword(this)">
+                                            <i class="fas fa-eye"></i>
+                                        </button>
+                                    </div>
+                                </div>
+
+                                <div class="col-12 mb-4">
+                                    <label class="form-label">Xác nhận mật khẩu mới <span class="required">*</span></label>
+                                    <div class="password-input">
+                                        <input type="password" class="form-control" name="confirm_password" required>
+                                        <button type="button" class="btn-toggle-password" onclick="togglePassword(this)">
+                                            <i class="fas fa-eye"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-actions">
+                                <button type="submit" class="btn btn-primary">
+                                    <i class="fas fa-key"></i> Đổi mật khẩu
+                                </button>
+                                <button type="reset" class="btn btn-secondary">
+                                    <i class="fas fa-undo"></i> Xóa form
+                                </button>
+                            </div>
+                        </form>
                     </div>
                 </div>
-                
-                <!-- Addresses Tab -->
-                <div class="tab-pane fade" id="addresses">
-                    <div class="card">
-                        <div class="card-header d-flex justify-content-between align-items-center">
-                            <h5 class="mb-0">Địa chỉ giao hàng</h5>
-                            <a href="{{ url_for('cart.add_address') }}" class="btn btn-primary btn-sm">
-                                <i class="fas fa-plus"></i> Thêm địa chỉ
+            </div>
+
+
+
+            <!-- Order Management Section / Admin Section -->
+            <div class="col-12">
+                <div class="content-card">
+                    <div class="card-header">
+                        {% if current_user.is_admin %}
+                        <h4>
+                            <a href="{{ url_for('auth.admin') }}" class="order-link">
+                                <i class="fas fa-cog"></i> Quản trị hệ thống
                             </a>
-                        </div>
-                        <div class="card-body">
-                            <p class="text-muted">Quản lý địa chỉ giao hàng của bạn</p>
-                            <a href="{{ url_for('cart.manage_addresses') }}" class="btn btn-outline-primary">
-                                <i class="fas fa-map-marker-alt"></i> Quản lý địa chỉ
+                        </h4>
+                        {% else %}
+                        <h4>
+                            <a href="{{ url_for('cart.my_orders') }}" class="order-link">
+                                <i class="fas fa-box"></i> Quản lý đơn hàng
                             </a>
-                        </div>
+                        </h4>
+                        {% endif %}
                     </div>
                 </div>
-                
-                <!-- Settings Tab -->
-                <div class="tab-pane fade" id="settings">
-                    <div class="card">
-                        <div class="card-header">
-                            <h5 class="mb-0">Cài đặt</h5>
-                        </div>
-                        <div class="card-body">
-                            <p class="text-muted">Cài đặt tài khoản và bảo mật</p>
-                            <p class="text-muted">Chức năng này sẽ được cập nhật sau!</p>
-                        </div>
-                    </div>
+            </div>
+
+                        <!-- Logout Section - Bottom -->
+            <div class="col-12">
+                <div class="logout-section">
+                    <a href="{{ url_for('auth.logout') }}" class="btn-logout"
+                        onclick="return confirm('Bạn có chắc muốn đăng xuất?')">
+                        <i class="fas fa-sign-out-alt"></i> Đăng xuất
+                    </a>
                 </div>
             </div>
         </div>
     </div>
-    
-    <div class="text-center mt-4">
-        <a href="{{ url_for('auth.logout') }}" class="btn btn-outline-danger">
-            <i class="fas fa-sign-out-alt"></i> Đăng xuất
-        </a>
-    </div>
 </div>
+</div>
+<style>
+    .account-page {
+        background-color: #f8f9fa;
+        min-height: 100vh;
+    }
+
+    .user-info-header {
+        display: flex;
+        align-items: center;
+        padding: 30px 25px;
+        background: linear-gradient(135deg, #e74c3c, #c0392b);
+        color: white;
+        border-radius: 12px 12px 0 0;
+        position: relative;
+    }
+
+    .user-info-header::after {
+        content: '';
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        height: 3px;
+        background: linear-gradient(90deg, rgba(255,255,255,0.3), rgba(255,255,255,0.1), rgba(255,255,255,0.3));
+    }
+
+    .user-avatar i {
+        font-size: 4.5rem;
+        margin-right: 20px;
+        opacity: 0.95;
+        filter: drop-shadow(0 2px 10px rgba(0,0,0,0.2));
+    }
+
+    .user-details h3 {
+        margin: 0 0 5px 0;
+        font-weight: 700;
+        font-size: 1.5rem;
+        text-shadow: 0 1px 3px rgba(0,0,0,0.2);
+    }
+
+    .user-details p {
+        margin: 0 0 10px 0;
+        opacity: 0.9;
+        font-size: 1rem;
+        font-weight: 400;
+    }
+
+    .user-status {
+        display: inline-block;
+        padding: 8px 18px;
+        border-radius: 25px;
+        font-size: 0.85rem;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        background: rgba(255,255,255,0.25);
+        backdrop-filter: blur(10px);
+        border: 1px solid rgba(255,255,255,0.2);
+    }
+
+    .user-status.admin {
+        background: linear-gradient(45deg, #f39c12, #e67e22);
+        box-shadow: 0 2px 10px rgba(243, 156, 18, 0.3);
+    }
+
+    .content-card {
+        background: white;
+        border-radius: 12px;
+        box-shadow: 0 3px 15px rgba(0,0,0,0.08);
+        margin: 20px;
+        overflow: hidden;
+        border: 1px solid #f0f0f0;
+    }
+
+    .content-card .card-header {
+        padding: 25px 30px;
+        border-bottom: 2px solid #f8f9fa;
+        background: linear-gradient(135deg, #fafafa, #f5f5f5);
+    }
+
+    .content-card .card-header h4 {
+        margin: 0 0 8px 0;
+        color: #2c3e50;
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        font-size: 1.2rem;
+        font-weight: 700;
+    }
+
+    .content-card .card-header h4 i {
+        color: #e74c3c;
+        font-size: 1.1rem;
+    }
+
+    .content-card .card-header p {
+        margin: 0;
+        color: #7f8c8d;
+        font-size: 0.9rem;
+        font-weight: 400;
+    }
+
+    .content-card .card-body {
+        padding: 30px;
+    }
+
+    .form-label {
+        font-weight: 600;
+        color: #2c3e50;
+        margin-bottom: 8px;
+        font-size: 0.95rem;
+        display: block;
+    }
+
+    .required {
+        color: #e74c3c;
+        font-weight: 700;
+    }
+
+    .form-control {
+        border: 2px solid #e9ecef;
+        border-radius: 10px;
+        padding: 14px 18px;
+        transition: all 0.3s ease;
+        font-size: 0.95rem;
+        background: #fff;
+        width: 100%;
+    }
+
+
+
+
+
+    .password-input {
+        position: relative;
+        width: 100%;
+    }
+
+    .btn-toggle-password {
+        position: absolute;
+        right: 15px;
+        top: 50%;
+        transform: translateY(-50%);
+        background: none;
+        border: none;
+        color: #6c757d;
+        cursor: pointer;
+        padding: 8px;
+        border-radius: 6px;
+        transition: all 0.3s ease;
+        z-index: 10;
+    }
+
+    .btn-toggle-password:hover {
+        color: #e74c3c;
+        background: rgba(231, 76, 60, 0.1);
+    }
+
+    .form-actions {
+        margin-top: 40px;
+        display: flex;
+        gap: 15px;
+        flex-wrap: wrap;
+    }
+
+    .btn {
+        padding: 14px 28px;
+        border-radius: 10px;
+        font-weight: 600;
+        transition: all 0.3s ease;
+        display: inline-flex;
+        align-items: center;
+        gap: 10px;
+        border: 2px solid transparent;
+        text-decoration: none;
+        cursor: pointer;
+        font-size: 0.95rem;
+    }
+
+    .btn-primary {
+        background: linear-gradient(135deg, #e74c3c, #c0392b);
+        border-color: #e74c3c;
+        color: white;
+        box-shadow: 0 4px 15px rgba(231, 76, 60, 0.2);
+    }
+
+
+
+    .btn-secondary {
+        background: #6c757d;
+        border-color: #6c757d;
+        color: white;
+        box-shadow: 0 4px 15px rgba(108, 117, 125, 0.2);
+    }
+
+
+
+    .logout-section {
+        padding: 25px;
+        border-top: 2px solid #f0f0f0;
+        background: #fafafa;
+    }
+
+    .btn-logout {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        color: #dc3545;
+        text-decoration: none;
+        padding: 15px 20px;
+        border-radius: 10px;
+        transition: all 0.3s ease;
+        width: 100%;
+        font-weight: 600;
+        border: 2px solid #dc3545;
+        background: transparent;
+        justify-content: center;
+    }
+
+    .btn-logout:hover {
+        background: #dc3545;
+        color: white;
+        transform: translateY(-2px);
+        box-shadow: 0 8px 25px rgba(220, 53, 69, 0.3);
+    }
+
+    .orders-summary {
+        margin-bottom: 30px;
+        padding: 25px;
+        background: #f8f9fa;
+        border-radius: 8px;
+    }
+
+    .summary-item {
+        padding: 20px;
+    }
+
+    .summary-icon {
+        width: 60px;
+        height: 60px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 0 auto 15px;
+        font-size: 1.5rem;
+        color: white;
+    }
+
+    .summary-icon.pending { background: #f39c12; }
+    .summary-icon.shipped { background: #3498db; }
+    .summary-icon.delivered { background: #27ae60; }
+    .summary-icon.total { background: #9b59b6; }
+
+    .summary-item h5 {
+        font-size: 2rem;
+        font-weight: bold;
+        margin: 0 0 5px 0;
+        color: #333;
+    }
+
+    .summary-item p {
+        margin: 0;
+        color: #666;
+        font-size: 0.9rem;
+    }
+
+    .orders-actions {
+        display: flex;
+        gap: 15px;
+        flex-wrap: wrap;
+        justify-content: center;
+    }
+
+    .btn-outline-primary {
+        color: #e74c3c;
+        border-color: #e74c3c;
+        background: transparent;
+    }
+
+    .btn-outline-primary:hover {
+        background: #e74c3c;
+        border-color: #e74c3c;
+        color: white;
+        transform: translateY(-2px);
+        box-shadow: 0 8px 25px rgba(231, 76, 60, 0.3);
+    }
+
+    .order-link {
+        color: #2c3e50;
+        text-decoration: none;
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        transition: all 0.3s ease;
+        font-size: 1.2rem;
+        font-weight: 700;
+    }
+
+    .order-link:hover {
+        color: #e74c3c;
+        text-decoration: none;
+    }
+
+    .order-link i {
+        color: #e74c3c;
+        font-size: 1.1rem;
+        transition: all 0.3s ease;
+    }
+
+
+
+    @media (max-width: 992px) {
+
+        .content-card {
+            margin: 15px;
+        }
+    }
+
+    @media (max-width: 768px) {
+        .account-page {
+            padding: 20px 0;
+        }
+
+        .content-card .card-header,
+        .content-card .card-body {
+            padding: 20px;
+        }
+
+        .form-actions {
+            flex-direction: column;
+        }
+
+        .btn {
+            justify-content: center;
+        }
+
+        .user-info {
+            padding: 30px 20px 25px;
+        }
+
+        .logout-section {
+            padding: 20px;
+        }
+    }
+
+    @media (max-width: 576px) {
+        .content-card {
+            margin: 10px;
+            border-radius: 8px;
+        }
+
+        .content-card .card-header,
+        .content-card .card-body {
+            padding: 15px;
+        }
+
+        .user-info {
+            padding: 25px 15px 20px;
+        }
+
+        .user-avatar i {
+            font-size: 3.5rem;
+        }
+
+        .logout-section {
+            padding: 15px;
+        }
+    }
+
+    /* Animation for form inputs */
+    .form-control:focus + .btn-toggle-password {
+        color: #e74c3c;
+    }
+
+    /* Smooth scrolling for sidebar */
+    .account-sidebar::-webkit-scrollbar {
+        width: 6px;
+    }
+
+    .account-sidebar::-webkit-scrollbar-track {
+        background: #f1f1f1;
+    }
+
+    .account-sidebar::-webkit-scrollbar-thumb {
+        background: #c1c1c1;
+        border-radius: 3px;
+    }
+
+    .account-sidebar::-webkit-scrollbar-thumb:hover {
+        background: #a1a1a1;
+    }
+</style>
+
+<script>
+    // Toggle password visibility
+    function togglePassword(button) {
+        const input = button.parentElement.querySelector('input');
+        const icon = button.querySelector('i');
+
+        if (input.type === 'password') {
+            input.type = 'text';
+            icon.classList.remove('fa-eye');
+            icon.classList.add('fa-eye-slash');
+        } else {
+            input.type = 'password';
+            icon.classList.remove('fa-eye-slash');
+            icon.classList.add('fa-eye');
+        }
+    }
+
+    // Form validation
+    document.addEventListener('DOMContentLoaded', function () {
+        const passwordForm = document.getElementById('password-form');
+        if (passwordForm) {
+            passwordForm.addEventListener('submit', function (e) {
+                const newPassword = document.querySelector('input[name="new_password"]').value;
+                const confirmPassword = document.querySelector('input[name="confirm_password"]').value;
+
+                if (newPassword !== confirmPassword) {
+                    e.preventDefault();
+                    alert('Mật khẩu mới không khớp!');
+                    return false;
+                }
+
+                if (newPassword.length < 8) {
+                    e.preventDefault();
+                    alert('Mật khẩu mới phải có ít nhất 8 ký tự!');
+                    return false;
+                }
+            });
+        }
+    });
+</script>
 {% endblock %}

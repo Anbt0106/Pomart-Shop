@@ -3,113 +3,342 @@
 {% block title %}Đơn hàng của tôi - Popmart{% endblock %}
 
 {% block content %}
-<div class="container mt-4">
-    <h1 class="text-center mb-4">Đơn hàng của tôi</h1>
-    
-    {% if orders %}
-        <div class="row">
-            {% for order in orders %}
-            <div class="col-12 mb-4">
-                <div class="card">
-                    <div class="card-header d-flex justify-content-between align-items-center">
-                        <div>
-                            <h6 class="mb-0">Đơn hàng #{{ order.id }}</h6>
-                            <small class="text-muted">{{ order.placed_at.strftime('%d/%m/%Y %H:%M') }}</small>
+
+<div class="my-orders-page">
+
+    <div class="grid">
+        <div class="page-header">
+            <h1>Đơn hàng của tôi</h1>
+            <p>Theo dõi và quản lý các đơn hàng đã đặt</p>
+        </div>
+
+        {% if orders %}
+            <div class="orders-list">
+                {% for order in orders %}
+                <div class="order-card">
+                    <div class="order-header">
+                        <div class="order-info">
+                            <h3>Đơn hàng #{{ order.id }}</h3>
+                            <p class="order-date">Đặt ngày: {{ order.placed_at.strftime('%d/%m/%Y %H:%M') }}</p>
                         </div>
-                        <div class="text-end">
-                            <span class="badge bg-{{ 'success' if order.status == 'delivered' else 'warning' if order.status == 'pending' else 'info' if order.status == 'shipped' else 'danger' }}">
-                                {{ order.status_display }}
-                            </span>
-                            <br>
-                            <small class="text-muted">{{ order.payment_status_display }}</small>
+                        <div class="order-status">
+                            <span class="status-badge {{ order.status }}">{{ order.status_display }}</span>
+                            <span class="payment-badge {{ order.payment_status }}">{{ order.payment_status_display }}</span>
                         </div>
                     </div>
-                    <div class="card-body">
-                        <div class="row">
-                            <div class="col-md-8">
-                                <h6>Sản phẩm:</h6>
-                                {% for item in order.items[:3] %}
-                                <div class="d-flex align-items-center mb-2">
-                                                                    {% if item.product.images %}
-                                    <img src="{{ url_for('static', filename='img/products/' + item.product.images[0].image_url) }}" 
-                                         alt="{{ item.product.name }}" 
-                                         class="img-fluid rounded me-2" 
-                                         style="max-width: 40px;">
+
+                    <div class="order-items">
+                        {% for item in order.items %}
+                        <div class="order-item">
+                            <div class="item-image">
+                                {% if item.product.images %}
+                                    <img src="{{ url_for('static', filename='img/products/' + item.product.images[0].image_url) }}"
+                                         alt="{{ item.product.name }}">
                                 {% else %}
-                                    <img src="{{ url_for('static', filename='img/404.gif') }}" 
-                                         alt="No image available" 
-                                         class="img-fluid rounded me-2" 
-                                         style="max-width: 40px;">
-                                {% endif %}
-                                    <div>
-                                        <strong>{{ item.product.name }}</strong><br>
-                                        <small class="text-muted">{{ item.quantity }} x {{ "{:,.0f}".format(item.price) }} VND</small>
-                                    </div>
-                                </div>
-                                {% endfor %}
-                                
-                                {% if order.items|length > 3 %}
-                                <p class="text-muted small">Và {{ order.items|length - 3 }} sản phẩm khác...</p>
-                                {% endif %}
-                                
-                                <div class="mt-3">
-                                    <strong>Tổng cộng: {{ "{:,.0f}".format(order.total_amount) }} VND</strong>
-                                </div>
-                            </div>
-                            
-                            <div class="col-md-4 text-end">
-                                <a href="{{ url_for('cart.order_detail', order_id=order.id) }}" 
-                                   class="btn btn-outline-primary btn-sm">
-                                    <i class="fas fa-eye"></i> Xem chi tiết
-                                </a>
-                                
-                                {% if order.status == 'pending' %}
-                                <div class="mt-2">
-                                    <button class="btn btn-outline-danger btn-sm" 
-                                            onclick="cancelOrder({{ order.id }})">
-                                        <i class="fas fa-times"></i> Hủy đơn hàng
-                                    </button>
-                                </div>
-                                {% endif %}
-                                
-                                {% if order.status == 'delivered' %}
-                                <div class="mt-2">
-                                    <button class="btn btn-outline-success btn-sm" 
-                                            onclick="reviewOrder({{ order.id }})">
-                                        <i class="fas fa-star"></i> Đánh giá
-                                    </button>
-                                </div>
+                                    <img src="{{ url_for('static', filename='img/404.gif') }}"
+                                         alt="No image">
                                 {% endif %}
                             </div>
+                            <div class="item-details">
+                                <h4>{{ item.product.name }}</h4>
+                                <p>Số lượng: {{ item.quantity }}</p>
+                                <p class="item-price">{{ "{:,.0f}".format(item.price) }} VND</p>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+
+                    <div class="order-footer">
+                        <div class="order-total">
+                            <strong>Tổng: {{ "{:,.0f}".format(order.total_amount) }} VND</strong>
+                        </div>
+                        <div class="order-actions">
+                            <a href="{{ url_for('cart.order_detail', order_id=order.id) }}" class="btn btn-outline">
+                                Chi tiết
+                            </a>
+                            {% if order.status == 'pending' and order.payment_status == 'unpaid' %}
+                            <a href="{{ url_for('cart.cancel_order', order_id=order.id) }}"
+                               class="btn btn-danger"
+                               onclick="return confirm('Bạn có chắc muốn hủy đơn hàng này?')">
+                                Hủy đơn
+                            </a>
+                            {% endif %}
                         </div>
                     </div>
                 </div>
+                {% endfor %}
             </div>
-            {% endfor %}
-        </div>
-    {% else %}
-        <div class="text-center py-5">
-            <i class="fas fa-shopping-bag fa-3x text-muted mb-3"></i>
-            <h3>Bạn chưa có đơn hàng nào</h3>
-            <p class="text-muted">Hãy bắt đầu mua sắm để có đơn hàng đầu tiên!</p>
-            <a href="{{ url_for('views.products') }}" class="btn btn-primary">
-                <i class="fas fa-shopping-bag"></i> Mua sắm ngay
-            </a>
-        </div>
-    {% endif %}
+        {% else %}
+            <div class="empty-orders">
+                <i class="fas fa-box-open"></i>
+                <h3>Chưa có đơn hàng nào</h3>
+                <p>Bạn chưa đặt đơn hàng nào. Hãy khám phá sản phẩm của chúng tôi!</p>
+                <a href="{{ url_for('views.home') }}" class="btn btn-primary">
+                    <i class="fas fa-shopping-bag"></i> Mua sắm ngay
+                </a>
+            </div>
+        {% endif %}
+    </div>
 </div>
 
-<script>
-function cancelOrder(orderId) {
-    if (confirm('Bạn có chắc muốn hủy đơn hàng này?')) {
-        // Here you would typically make an AJAX call to cancel the order
-        alert('Chức năng hủy đơn hàng sẽ được cập nhật sau!');
-    }
+
+
+<style>
+.my-orders-page {
+    padding: 20px 0;
+    background-color: #f8f9fa;
+    min-height: 80vh;
 }
 
-function reviewOrder(orderId) {
-    // Here you would typically redirect to a review form
-    alert('Chức năng đánh giá sẽ được cập nhật sau!');
+.page-header {
+    text-align: center;
+    margin-bottom: 40px;
 }
-</script>
+
+.page-header h1 {
+    color: #333;
+    margin-bottom: 10px;
+}
+
+.page-header p {
+    color: #666;
+    font-size: 1.1rem;
+}
+
+.orders-list {
+    max-width: 1000px;
+    margin: 0 auto;
+}
+
+.order-card {
+    background: white;
+    margin-bottom: 20px;
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    overflow: hidden;
+}
+
+.order-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px;
+    background: #f8f9fa;
+    border-bottom: 1px solid #dee2e6;
+}
+
+.order-info h3 {
+    margin: 0;
+    color: #333;
+    font-size: 1.2rem;
+}
+
+.order-date {
+    margin: 5px 0 0 0;
+    color: #666;
+    font-size: 0.9rem;
+}
+
+.order-status {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    align-items: end;
+}
+
+.status-badge, .payment-badge {
+    padding: 4px 12px;
+    border-radius: 20px;
+    font-size: 0.8rem;
+    font-weight: 500;
+    text-transform: uppercase;
+}
+
+.status-badge.pending {
+    background: #fff3cd;
+    color: #856404;
+}
+
+.status-badge.shipped {
+    background: #d1ecf1;
+    color: #0c5460;
+}
+
+.status-badge.delivered {
+    background: #d4edda;
+    color: #155724;
+}
+
+.status-badge.canceled {
+    background: #f8d7da;
+    color: #721c24;
+}
+
+.payment-badge.unpaid {
+    background: #f8d7da;
+    color: #721c24;
+}
+
+.payment-badge.paid {
+    background: #d4edda;
+    color: #155724;
+}
+
+.order-items {
+    padding: 20px;
+}
+
+.order-item {
+    display: flex;
+    align-items: center;
+    margin-bottom: 15px;
+    padding-bottom: 15px;
+    border-bottom: 1px solid #eee;
+}
+
+.order-item:last-child {
+    margin-bottom: 0;
+    padding-bottom: 0;
+    border-bottom: none;
+}
+
+.item-image img {
+    width: 60px;
+    height: 60px;
+    object-fit: cover;
+    border-radius: 6px;
+    margin-right: 15px;
+}
+
+.item-details h4 {
+    margin: 0 0 5px 0;
+    color: #333;
+    font-size: 1rem;
+}
+
+.item-details p {
+    margin: 3px 0;
+    color: #666;
+    font-size: 0.9rem;
+}
+
+.item-price {
+    font-weight: bold;
+    color: #e74c3c !important;
+}
+
+.order-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px;
+    background: #f8f9fa;
+    border-top: 1px solid #dee2e6;
+}
+
+.order-total {
+    font-size: 1.1rem;
+    color: #e74c3c;
+}
+
+.order-actions {
+    display: flex;
+    gap: 10px;
+}
+
+.btn {
+    padding: 8px 16px;
+    border-radius: 4px;
+    text-decoration: none;
+    font-size: 0.9rem;
+    font-weight: 500;
+    transition: all 0.3s ease;
+    border: none;
+    cursor: pointer;
+}
+
+.btn-outline {
+    background: transparent;
+    color: #007bff;
+    border: 1px solid #007bff;
+}
+
+.btn-outline:hover {
+    background: #007bff;
+    color: white;
+}
+
+.btn-danger {
+    background: #dc3545;
+    color: white;
+}
+
+.btn-danger:hover {
+    background: #c82333;
+}
+
+.btn-primary {
+    background: #e74c3c;
+    color: white;
+    padding: 12px 24px;
+    font-size: 1rem;
+}
+
+.btn-primary:hover {
+    background: #c0392b;
+}
+
+.empty-orders {
+    text-align: center;
+    padding: 60px 20px;
+    background: white;
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    max-width: 500px;
+    margin: 0 auto;
+}
+
+.empty-orders i {
+    font-size: 4rem;
+    color: #dee2e6;
+    margin-bottom: 20px;
+}
+
+.empty-orders h3 {
+    color: #333;
+    margin-bottom: 10px;
+}
+
+.empty-orders p {
+    color: #666;
+    margin-bottom: 30px;
+}
+
+@media (max-width: 768px) {
+    .order-header {
+        flex-direction: column;
+        text-align: center;
+        gap: 15px;
+    }
+
+    .order-footer {
+        flex-direction: column;
+        gap: 15px;
+        text-align: center;
+    }
+
+    .order-actions {
+        justify-content: center;
+    }
+
+    .order-item {
+        flex-direction: column;
+        text-align: center;
+    }
+
+    .item-image {
+        margin-bottom: 10px;
+    }
+}
+</style>
 {% endblock %}

@@ -3,106 +3,468 @@
 {% block page_title %}Dashboard{% endblock %}
 
 {% block content %}
-<div class="admin-content">
-    <div class="admin-header">
-        <h1>Admin Dashboard</h1>
-        <div class="admin-date">
-            <i class="fa-regular fa-calendar"></i>
+<style>
+/* Dashboard Styles */
+.dashboard-container {
+    padding: 20px;
+    background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+    min-height: 100vh;
+}
+
+.dashboard-header {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    padding: 25px 30px;
+    border-radius: 20px;
+    margin-bottom: 30px;
+    box-shadow: 0 10px 30px rgba(102, 126, 234, 0.3);
+}
+
+.dashboard-title {
+    font-size: 2.2rem;
+    font-weight: 700;
+    margin: 0 0 10px 0;
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.dashboard-subtitle {
+    font-size: 1.1rem;
+    opacity: 0.9;
+    margin: 0;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.welcome-message {
+    background: rgba(255, 255, 255, 0.1);
+    padding: 15px 20px;
+    border-radius: 10px;
+    margin-top: 15px;
+    backdrop-filter: blur(10px);
+}
+
+/* Statistics Cards */
+.stats-section {
+    margin-bottom: 30px;
+}
+
+.section-title {
+    color: #2c3e50;
+    font-size: 1.5rem;
+    font-weight: 700;
+    margin-bottom: 20px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.stats-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 25px;
+    margin-bottom: 30px;
+}
+
+.stat-card {
+    background: white;
+    padding: 25px;
+    border-radius: 15px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+}
+
+.stat-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.15);
+}
+
+.stat-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background: var(--card-color);
+}
+
+.stat-card.products::before { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); }
+.stat-card.users::before { background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%); }
+.stat-card.orders::before { background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%); }
+.stat-card.revenue::before { background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%); }
+
+.stat-header {
+    display: flex;
+    justify-content: between;
+    align-items: center;
+    margin-bottom: 15px;
+}
+
+.stat-icon {
+    width: 60px;
+    height: 60px;
+    border-radius: 15px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.8rem;
+    color: white;
+    margin-bottom: 15px;
+}
+
+.stat-icon.products { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); }
+.stat-icon.users { background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%); }
+.stat-icon.orders { background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%); }
+.stat-icon.revenue { background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%); }
+
+.stat-number {
+    font-size: 2.5rem;
+    font-weight: 700;
+    color: #2c3e50;
+    margin: 0 0 5px 0;
+}
+
+.stat-label {
+    color: #7f8c8d;
+    font-size: 1rem;
+    font-weight: 600;
+    margin: 0;
+}
+
+.stat-change {
+    font-size: 0.85rem;
+    font-weight: 600;
+    margin-top: 10px;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
+.stat-change.positive { color: #27ae60; }
+.stat-change.negative { color: #e74c3c; }
+
+/* Quick Actions */
+.quick-actions-section {
+    margin-bottom: 30px;
+}
+
+.actions-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 20px;
+}
+
+.action-card {
+    background: white;
+    padding: 20px;
+    border-radius: 15px;
+    text-decoration: none;
+    color: #2c3e50;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+    transition: all 0.3s ease;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+}
+
+.action-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 6px 25px rgba(0, 0, 0, 0.15);
+    color: #2c3e50;
+}
+
+.action-icon {
+    width: 50px;
+    height: 50px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.5rem;
+    color: white;
+    margin-bottom: 15px;
+}
+
+.action-icon.add { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); }
+.action-icon.manage { background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%); }
+.action-icon.users { background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%); }
+.action-icon.orders { background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%); }
+.action-icon.analytics { background: linear-gradient(135deg, #fa709a 0%, #fee140 100%); }
+.action-icon.settings { background: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%); }
+
+.action-title {
+    font-weight: 600;
+    font-size: 1rem;
+    margin: 0;
+}
+
+/* Recent Activity */
+.activity-section {
+    margin-bottom: 30px;
+}
+
+.activity-grid {
+    display: grid;
+    grid-template-columns: 2fr 1fr;
+    gap: 25px;
+}
+
+.activity-card {
+    background: white;
+    border-radius: 15px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+    overflow: hidden;
+}
+
+.activity-header {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    padding: 20px 25px;
+    font-weight: 600;
+    font-size: 1.1rem;
+}
+
+.activity-body {
+    padding: 25px;
+}
+
+.activity-item {
+    display: flex;
+    align-items: center;
+    padding: 15px 0;
+    border-bottom: 1px solid #f8f9fa;
+}
+
+.activity-item:last-child {
+    border-bottom: none;
+}
+
+.activity-icon {
+    width: 40px;
+    height: 40px;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-right: 15px;
+    font-size: 1rem;
+    color: white;
+}
+
+.activity-icon.new { background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%); }
+.activity-icon.update { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); }
+.activity-icon.order { background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%); }
+.activity-icon.user { background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%); }
+
+.activity-content {
+    flex: 1;
+}
+
+.activity-text {
+    color: #2c3e50;
+    font-weight: 600;
+    margin: 0 0 5px 0;
+}
+
+.activity-time {
+    color: #7f8c8d;
+    font-size: 0.85rem;
+    margin: 0;
+}
+
+/* Charts Section */
+.charts-section {
+    margin-bottom: 30px;
+}
+
+.charts-grid {
+    display: grid;
+    grid-template-columns: 2fr 1fr;
+    gap: 25px;
+}
+
+.chart-card {
+    background: white;
+    border-radius: 15px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+    overflow: hidden;
+}
+
+.chart-header {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    padding: 20px 25px;
+    font-weight: 600;
+    font-size: 1.1rem;
+}
+
+.chart-body {
+    padding: 25px;
+    height: 300px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #7f8c8d;
+    font-style: italic;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .dashboard-container {
+        padding: 15px;
+    }
+
+    .stats-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .activity-grid,
+    .charts-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .dashboard-title {
+        font-size: 1.8rem;
+    }
+}
+</style>
+
+<div class="dashboard-container">
+    <!-- Dashboard Header -->
+    <div class="dashboard-header">
+        <h1 class="dashboard-title">
+            <i class="fas fa-tachometer-alt"></i>
+            Dashboard Admin
+        </h1>
+        <p class="dashboard-subtitle">
+            <i class="fas fa-calendar-alt"></i>
             <span id="current-date"></span>
+        </p>
+    </div>
+
+    <!-- Statistics Section -->
+    <div class="stats-section">
+        <h2 class="section-title">
+            <i class="fas fa-chart-bar"></i>
+            Thống kê tổng quan
+        </h2>
+        <div class="stats-grid">
+            <div class="stat-card products">
+                <div class="stat-icon products">
+                    <i class="fas fa-box"></i>
+                </div>
+                <h3 class="stat-number">{{ total_products or 0 }}</h3>
+                <p class="stat-label">Tổng sản phẩm</p>
+
+            </div>
+
+            <div class="stat-card users">
+                <div class="stat-icon users">
+                    <i class="fas fa-users"></i>
+                </div>
+                <h3 class="stat-number">{{ total_users or 0 }}</h3>
+                <p class="stat-label">Người dùng</p>
+
+            </div>
+
+            <div class="stat-card orders">
+                <div class="stat-icon orders">
+                    <i class="fas fa-shopping-cart"></i>
+                </div>
+                <h3 class="stat-number">{{ total_orders or 0 }}</h3>
+                <p class="stat-label">Đơn hàng</p>
+
+            </div>
+
+            <div class="stat-card revenue">
+                <div class="stat-icon revenue">
+                    <i class="fas fa-dollar-sign"></i>
+                </div>
+                <h3 class="stat-number">{{ "{:,.0f}".format(total_revenue or 0) }} VNĐ</h3>
+
+            </div>
         </div>
     </div>
 
-    <!-- Statistics Cards -->
-    <div class="stats-grid">
-        <div class="stat-card" >
+    <!-- Quick Actions Section -->
+    <div class="quick-actions-section">
+        <h2 class="section-title">
+            <i class="fas fa-bolt"></i>
+            Thao tác nhanh
+        </h2>
+        <div class="actions-grid">
+            <a href="{{ url_for('admin.add_item') }}" class="action-card">
+                <div class="action-icon add">
+                    <i class="fas fa-plus"></i>
+                </div>
+                <h4 class="action-title">Thêm sản phẩm</h4>
+            </a>
 
-            <div class="stat-icon">
-                <i class="fa-solid fa-box"></i>
-            </div>
-            <div class="stat-info">
-                <h3>{{ total_products or 0 }}</h3>
-                <p>Tổng sản phẩm</p>
-            </div>
-        </div>
+            <a href="{{ url_for('admin.manage_products') }}" class="action-card">
+                <div class="action-icon manage">
+                    <i class="fas fa-boxes"></i>
+                </div>
+                <h4 class="action-title">Quản lý sản phẩm</h4>
+            </a>
 
-        <div class="stat-card">
-            <div class="stat-icon">
-                <i class="fa-solid fa-users"></i>
-            </div>
-            <div class="stat-info">
-                <h3>{{ total_users or 0 }}</h3>
-                <p>Người dùng</p>
-            </div>
-        </div>
+            <a href="{{ url_for('admin.users_list') }}" class="action-card">
+                <div class="action-icon users">
+                    <i class="fas fa-users-cog"></i>
+                </div>
+                <h4 class="action-title">Quản lý người dùng</h4>
+            </a>
 
-        <div class="stat-card">
-            <div class="stat-icon">
-                <i class="fa-solid fa-shopping-cart"></i>
-            </div>
-            <div class="stat-info">
-                <h3>{{ total_orders or 0 }}</h3>
-                <p>Đơn hàng</p>
-            </div>
-        </div>
+            <a href="{{ url_for('admin.orders_list') }}" class="action-card">
+                <div class="action-icon orders">
+                    <i class="fas fa-file-invoice"></i>
+                </div>
+                <h4 class="action-title">Quản lý đơn hàng</h4>
+            </a>
 
-        <div class="stat-card">
-            <div class="stat-icon">
-                <i class="fa-solid fa-dollar-sign"></i>
-            </div>
-            <div class="stat-info">
-                <h3>${{ total_revenue or 0 }}</h3>
-                <p>Doanh thu</p>
-            </div>
+            <a href="{{ url_for('admin.order_statistics') }}" class="action-card">
+                <div class="action-icon analytics">
+                    <i class="fas fa-chart-line"></i>
+                </div>
+                <h4 class="action-title">Báo cáo & Thống kê</h4>
+            </a>
+
+
         </div>
     </div>
 
-    <!-- Quick Actions -->
-<!--    <div class="quick-actions">-->
-<!--        <h2>Thao tác nhanh</h2>-->
-<!--        <div class="action-grid">-->
-<!--            <a href="{{ url_for('admin.add_item') }}" class="action-card">-->
-<!--                <i class="fa-solid fa-plus"></i>-->
-<!--                <span>Thêm sản phẩm</span>-->
-<!--            </a>-->
-<!--            <a href="{{ url_for('admin.manage_products') }}" class="action-card">-->
-<!--                <i class="fa-solid fa-list"></i>-->
-<!--                <span>Quản lý sản phẩm</span>-->
-<!--            </a>-->
-<!--            <a href="#" class="action-card">-->
-<!--                <i class="fa-solid fa-users-gear"></i>-->
-<!--                <span>Quản lý người dùng</span>-->
-<!--            </a>-->
-<!--            <a href="#" class="action-card">-->
-<!--                <i class="fa-solid fa-chart-line"></i>-->
-<!--                <span>Báo cáo</span>-->
-<!--            </a>-->
-<!--        </div>-->
-<!--    </div>-->
 
-<!--    &lt;!&ndash; Recent Activities &ndash;&gt;-->
-<!--    <div class="recent-activities">-->
-<!--        <h2>Hoạt động gần đây</h2>-->
-<!--        <div class="activity-list">-->
-<!--            <div class="activity-item">-->
-<!--                <i class="fa-solid fa-plus-circle"></i>-->
-<!--                <span>Sản phẩm mới đã được thêm</span>-->
-<!--                <small>2 giờ trước</small>-->
-<!--            </div>-->
-<!--            <div class="activity-item">-->
-<!--                <i class="fa-solid fa-edit"></i>-->
-<!--                <span>Cập nhật thông tin sản phẩm</span>-->
-<!--                <small>5 giờ trước</small>-->
-<!--            </div>-->
-<!--            <div class="activity-item">-->
-<!--                <i class="fa-solid fa-shopping-cart"></i>-->
-<!--                <span>Đơn hàng mới #1234</span>-->
-<!--                <small>1 ngày trước</small>-->
-<!--            </div>-->
-<!--        </div>-->
-<!--    </div>-->
 </div>
 
 <script>
-document.getElementById('current-date').textContent = new Date().toLocaleDateString('vi-VN');
+// Set current date
+document.getElementById('current-date').textContent = new Date().toLocaleDateString('vi-VN', {
+    weekday: 'long',
+    year: 'numeric',
+    month: 'long',
+    day: 'numeric'
+});
+
+// Add some interactivity
+document.querySelectorAll('.stat-card').forEach(card => {
+    card.addEventListener('mouseenter', function() {
+        this.style.transform = 'translateY(-8px) scale(1.02)';
+    });
+
+    card.addEventListener('mouseleave', function() {
+        this.style.transform = 'translateY(0) scale(1)';
+    });
+});
+
+// Simulate real-time updates (placeholder)
+setInterval(() => {
+    // This would connect to real-time data in a production environment
+    console.log('Checking for dashboard updates...');
+}, 30000);
 </script>
 {% endblock %}

@@ -1,0 +1,583 @@
+{% extends "layout_admin.html" %}
+
+{% block title %}Quản lý người dùng{% endblock %}
+
+{% block content %}
+<style>
+/* Users List Page Styles */
+.users-container {
+    padding: 20px;
+    background-color: #f8f9fa;
+    min-height: 100vh;
+}
+
+.users-card {
+    border: none;
+    border-radius: 15px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+    margin-bottom: 25px;
+    overflow: hidden;
+}
+
+.users-card-header {
+    background: linear-gradient(135deg, #fd79a8 0%, #e84393 100%);
+    color: white;
+    padding: 20px 25px;
+    border: none;
+}
+
+.users-card-title {
+    margin: 0;
+    font-weight: 700;
+    font-size: 1.4rem;
+}
+
+.search-form {
+    background-color: white;
+    padding: 25px;
+    border-radius: 10px;
+    margin-bottom: 20px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+}
+
+.form-control, .form-select {
+    border: 2px solid #e9ecef;
+    border-radius: 8px;
+    padding: 12px 15px;
+    font-size: 0.95rem;
+    transition: all 0.3s ease;
+}
+
+.form-control:focus, .form-select:focus {
+    border-color: #fd79a8;
+    box-shadow: 0 0 0 0.2rem rgba(253, 121, 168, 0.25);
+}
+
+.btn-search {
+    background: linear-gradient(135deg, #fd79a8 0%, #e84393 100%);
+    border: none;
+    border-radius: 8px;
+    padding: 12px 20px;
+    font-weight: 600;
+    color: white;
+    transition: all 0.3s ease;
+}
+
+.btn-search:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(253, 121, 168, 0.4);
+    color: white;
+}
+
+.users-table {
+    background-color: white;
+    border-radius: 10px;
+    overflow: hidden;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+}
+
+.users-table thead th {
+    background-color: #2c3e50;
+    color: white;
+    border: none;
+    font-weight: 600;
+    padding: 18px 15px;
+    text-transform: uppercase;
+    font-size: 0.8rem;
+    letter-spacing: 1px;
+}
+
+.users-table tbody td {
+    padding: 15px;
+    vertical-align: middle;
+    border-bottom: 1px solid #f1f3f4;
+}
+
+.users-table tbody tr {
+    transition: all 0.3s ease;
+}
+
+.users-table tbody tr:hover {
+    background-color: #f8f9fa;
+    transform: translateY(-1px);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.status-badge {
+    padding: 8px 16px;
+    border-radius: 20px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    display: inline-block;
+}
+
+.status-active {
+    background: linear-gradient(135deg, #00b894 0%, #00a085 100%);
+    color: white;
+}
+
+.status-inactive {
+    background: linear-gradient(135deg, #e17055 0%, #d63031 100%);
+    color: white;
+}
+
+.role-admin {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+}
+
+.role-user {
+    background: linear-gradient(135deg, #636e72 0%, #2d3436 100%);
+    color: white;
+}
+
+.user-info {
+    display: flex;
+    flex-direction: column;
+}
+
+.user-name {
+    font-weight: 600;
+    color: #2c3e50;
+    margin-bottom: 2px;
+    font-size: 1rem;
+}
+
+.user-email {
+    font-size: 0.85rem;
+    color: #6c757d;
+}
+
+.username-text {
+    font-weight: 600;
+    color: #495057;
+    font-family: 'Courier New', monospace;
+    background-color: #f8f9fa;
+    padding: 4px 8px;
+    border-radius: 4px;
+    font-size: 0.9rem;
+}
+
+.action-buttons {
+    display: flex;
+    gap: 5px;
+}
+
+.btn-action {
+    border-radius: 6px;
+    padding: 8px 12px;
+    font-size: 0.85rem;
+    border: none;
+    transition: all 0.3s ease;
+}
+
+.btn-view-orders {
+    background-color: #17a2b8;
+    color: white;
+}
+
+.btn-view-orders:hover {
+    background-color: #138496;
+    transform: translateY(-1px);
+    color: white;
+}
+
+.btn-toggle-active {
+    background-color: #ffc107;
+    color: #212529;
+}
+
+.btn-toggle-active:hover {
+    background-color: #e0a800;
+    transform: translateY(-1px);
+    color: #212529;
+}
+
+.btn-toggle-inactive {
+    background-color: #28a745;
+    color: white;
+}
+
+.btn-toggle-inactive:hover {
+    background-color: #218838;
+    transform: translateY(-1px);
+    color: white;
+}
+
+.empty-state {
+    text-align: center;
+    padding: 60px 20px;
+    color: #6c757d;
+}
+
+.empty-icon {
+    font-size: 4rem;
+    margin-bottom: 20px;
+    opacity: 0.3;
+}
+
+.pagination-custom {
+    margin-top: 30px;
+}
+
+.pagination-custom .page-link {
+    border: 2px solid #e9ecef;
+    color: #fd79a8;
+    padding: 12px 18px;
+    margin: 0 3px;
+    border-radius: 8px;
+    font-weight: 600;
+    transition: all 0.3s ease;
+}
+
+.pagination-custom .page-item.active .page-link {
+    background: linear-gradient(135deg, #fd79a8 0%, #e84393 100%);
+    border-color: #fd79a8;
+    color: white;
+}
+
+.pagination-custom .page-link:hover {
+    background-color: #f8f9fa;
+    border-color: #fd79a8;
+    transform: translateY(-1px);
+}
+
+/* Statistics Cards */
+.stats-row {
+    margin-top: 30px;
+}
+
+.stat-card {
+    background: white;
+    border: none;
+    border-radius: 15px;
+    padding: 20px;
+    text-align: center;
+    transition: all 0.3s ease;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
+    position: relative;
+    overflow: hidden;
+}
+
+.stat-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+}
+
+.stat-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+}
+
+.stat-card.primary::before {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+}
+
+.stat-card.success::before {
+    background: linear-gradient(135deg, #00b894 0%, #00a085 100%);
+}
+
+.stat-card.warning::before {
+    background: linear-gradient(135deg, #fdcb6e 0%, #e17055 100%);
+}
+
+.stat-card.info::before {
+    background: linear-gradient(135deg, #74b9ff 0%, #0984e3 100%);
+}
+
+.stat-number {
+    font-size: 2rem;
+    font-weight: 700;
+    color: #2c3e50;
+    margin-bottom: 8px;
+}
+
+.stat-label {
+    color: #6c757d;
+    font-weight: 500;
+    font-size: 0.9rem;
+    margin: 0;
+}
+
+.user-avatar {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-weight: 600;
+    margin-right: 12px;
+    font-size: 1.1rem;
+}
+
+.user-full-info {
+    display: flex;
+    align-items: center;
+}
+
+.user-details {
+    flex: 1;
+}
+
+.user-id {
+    font-family: 'Courier New', monospace;
+    font-weight: 600;
+    color: #495057;
+    background-color: #f8f9fa;
+    padding: 2px 6px;
+    border-radius: 3px;
+    font-size: 0.8rem;
+}
+
+.date-text {
+    font-size: 0.9rem;
+    color: #6c757d;
+}
+
+@media (max-width: 768px) {
+    .users-container {
+        padding: 10px;
+    }
+
+    .users-table {
+        font-size: 0.85rem;
+    }
+
+    .action-buttons {
+        flex-direction: column;
+    }
+
+    .user-info {
+        font-size: 0.9rem;
+    }
+
+    .stat-card {
+        margin-bottom: 15px;
+    }
+
+    .user-full-info {
+        flex-direction: column;
+        text-align: center;
+    }
+
+    .user-avatar {
+        margin-right: 0;
+        margin-bottom: 8px;
+    }
+}
+
+/* Loading spinner */
+.loading-spinner {
+    display: inline-block;
+    width: 20px;
+    height: 20px;
+    border: 3px solid #f3f3f3;
+    border-top: 3px solid #fd79a8;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+/* Success message */
+.success-message {
+    background: linear-gradient(135deg, #00b894 0%, #00a085 100%);
+    color: white;
+    padding: 12px 20px;
+    border-radius: 8px;
+    margin-bottom: 20px;
+    display: none;
+}
+
+.success-message.show {
+    display: block;
+    animation: slideIn 0.3s ease;
+}
+
+@keyframes slideIn {
+    from { opacity: 0; transform: translateY(-10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+</style>
+
+<div class="users-container">
+    <div class="users-card">
+
+
+
+            <div class="admin-header">
+        <h1>Quản lý người dùng</h1>
+
+    </div>
+
+
+
+        <!-- Users Table -->
+        <div class="table-responsive">
+            <table class="table users-table">
+                <thead>
+                    <tr>
+                        <th><i class="fas fa-hashtag me-1"></i> ID</th>
+                        <th><i class="fas fa-user me-1"></i> Người dùng</th>
+                        <th><i class="fas fa-at me-1"></i> Username</th>
+                        <th><i class="fas fa-envelope me-1"></i> Email</th>
+                        <th><i class="fas fa-toggle-on me-1"></i> Trạng thái</th>
+                        <th><i class="fas fa-crown me-1"></i> Vai trò</th>
+                        <th><i class="fas fa-calendar me-1"></i> Ngày tạo</th>
+                    </tr>
+                </thead>
+
+
+                <tbody>
+                    {% for user in users.items %}
+                    <tr>
+                        <td><span class="user-id">#{{ user.id }}</span></td>
+                        <td>
+                            <div class="user-full-info">
+                                <div class="user-avatar">
+                                    {{ user.first_name[0]|upper }}{{ user.last_name[0]|upper }}
+                                </div>
+                                <div class="user-details">
+                                    <div class="user-name">{{ user.full_name }}</div>
+                                </div>
+                            </div>
+                        </td>
+                        <td><span class="username-text">{{ user.username }}</span></td>
+                        <td><span class="user-email">{{ user.email }}</span></td>
+                        <td>
+                            <span class="status-badge {% if user.is_active %}status-active{% else %}status-inactive{% endif %}">
+                                {% if user.is_active %}Đang hoạt động{% else %}Không hoạt động{% endif %}
+                            </span>
+                        </td>
+                        <td>
+                            <span class="status-badge {% if user.is_admin %}role-admin{% else %}role-user{% endif %}">
+                                {% if user.is_admin %}Quản trị viên{% else %}Người dùng{% endif %}
+                            </span>
+                        </td>
+                        <td><span class="date-text">{{ user.created_at.strftime('%d/%m/%Y') }}</span></td>
+
+                    </tr>
+                    {% else %}
+                    <tr>
+                        <td colspan="8">
+                            <div class="empty-state">
+                                <i class="fas fa-users empty-icon"></i>
+                                <h5>Không có người dùng nào</h5>
+                                <p>Hiện tại không tìm thấy người dùng nào phù hợp với tiêu chí tìm kiếm.</p>
+                            </div>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Pagination -->
+        {% if users.pages > 1 %}
+        <nav aria-label="Page navigation">
+            <ul class="pagination pagination-custom justify-content-center">
+                {% if users.has_prev %}
+                    <li class="page-item">
+                        <a class="page-link" href="{{ url_for('admin.users_list', page=users.prev_num, search=search, status=status_filter) }}">
+                            <i class="fas fa-chevron-left me-1"></i> Trước
+                        </a>
+                    </li>
+                {% endif %}
+
+                {% for page_num in users.iter_pages() %}
+                    {% if page_num %}
+                        {% if page_num != users.page %}
+                            <li class="page-item">
+                                <a class="page-link" href="{{ url_for('admin.users_list', page=page_num, search=search, status=status_filter) }}">{{ page_num }}</a>
+                            </li>
+                        {% else %}
+                            <li class="page-item active">
+                                <span class="page-link">{{ page_num }}</span>
+                            </li>
+                        {% endif %}
+                    {% else %}
+                        <li class="page-item disabled">
+                            <span class="page-link">...</span>
+                        </li>
+                    {% endif %}
+                {% endfor %}
+
+                {% if users.has_next %}
+                    <li class="page-item">
+                        <a class="page-link" href="{{ url_for('admin.users_list', page=users.next_num, search=search, status=status_filter) }}">
+                            Tiếp <i class="fas fa-chevron-right ms-1"></i>
+                        </a>
+                    </li>
+                {% endif %}
+            </ul>
+        </nav>
+        {% endif %}
+
+
+    </div>
+</div>
+
+<script>
+function toggleUserStatus(userId, button) {
+    if (confirm('Bạn có chắc chắn muốn thay đổi trạng thái người dùng này?')) {
+        // Show loading spinner
+        const originalHtml = button.innerHTML;
+        button.innerHTML = '<span class="loading-spinner"></span>';
+        button.disabled = true;
+
+        fetch(`/admin/users/${userId}/toggle-status`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            }
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                // Show success message
+                showSuccessMessage(data.message);
+
+                // Update button and status
+                setTimeout(() => {
+                    location.reload();
+                }, 1000);
+            } else {
+                alert('Lỗi: ' + data.message);
+                button.innerHTML = originalHtml;
+                button.disabled = false;
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            alert('Có lỗi xảy ra khi cập nhật trạng thái');
+            button.innerHTML = originalHtml;
+            button.disabled = false;
+        });
+    }
+}
+
+function showSuccessMessage(message) {
+    const successMessage = document.getElementById('successMessage');
+    const successText = document.getElementById('successText');
+
+    successText.textContent = message;
+    successMessage.classList.add('show');
+
+    setTimeout(() => {
+        successMessage.classList.remove('show');
+    }, 3000);
+}
+</script>
+{% endblock %}

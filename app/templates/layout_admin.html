@@ -5,6 +5,7 @@
     <title>{% block title %}Admin Dashboard{% endblock %}</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/admin.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/add_product.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/admin-management.css') }}">
     <link href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100..900;1,100..900&display=swap"
           rel="stylesheet">
     <link rel="stylesheet"
@@ -32,19 +33,19 @@
             <span>Quản lý sản phẩm</span>
         </a>
 
-        <a href="#" class="nav-item">
+        <a href="{{ url_for('admin.users_list') }}" class="nav-item">
             <i class="fa-solid fa-users"></i>
             <span>Quản lý người dùng</span>
         </a>
 
-        <a href="#" class="nav-item">
+        <a href="{{ url_for('admin.orders_list') }}" class="nav-item">
             <i class="fa-solid fa-shopping-cart"></i>
             <span>Quản lý đơn hàng</span>
         </a>
 
-        <a href="#" class="nav-item">
+        <a href="{{ url_for('admin.order_statistics') }}" class="nav-item">
             <i class="fa-solid fa-chart-line"></i>
-            <span>Báo cáo & thống kê</span>
+            <span>Thống kê đơn hàng</span>
         </a>
 
         <a href="#" class="nav-item">
